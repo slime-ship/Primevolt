@@ -26,6 +26,8 @@ const Invest = () => {
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedDetailInvestment, setSelectedDetailInvestment] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -196,6 +198,31 @@ const Invest = () => {
     });
   };
 
+  const getSingleInvestmentChartData = (inv) => {
+    if (!inv) return [];
+    const invTransactions = transactions
+      .filter(t => t.type === 'PROFIT' && t.reference_id === String(inv.id))
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    let cumulative = 0;
+    const data = invTransactions.map(tx => {
+      cumulative += parseFloat(tx.amount);
+      return {
+        date: new Date(tx.created_at).toLocaleDateString(),
+        profit: cumulative,
+        rawAmount: parseFloat(tx.amount)
+      };
+    });
+
+    data.unshift({
+      date: new Date(inv.start_date).toLocaleDateString(),
+      profit: 0,
+      rawAmount: 0
+    });
+
+    return data;
+  };
+
   const getNextPayoutCountdown = () => {
     const activeInvs = investments.filter(i => i.status === 'ACTIVE' && i.next_payout_at);
     if (activeInvs.length === 0) return 'No active payouts';
@@ -346,7 +373,7 @@ const Invest = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-200 dark:border-gray-850 text-slate-550 dark:text-gray-400 font-semibold">
+                    <tr className="border-b border-slate-200 dark:border-gray-850 text-slate-555 dark:text-gray-400 font-semibold">
                       <th className="pb-3">ID</th>
                       <th className="pb-3">Plan</th>
                       <th className="pb-3">Amount</th>
@@ -354,6 +381,7 @@ const Invest = () => {
                       <th className="pb-3">Start Date</th>
                       <th className="pb-3">End Date</th>
                       <th className="pb-3">Status</th>
+                      <th className="pb-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-150 dark:divide-gray-800/45 text-slate-700 dark:text-gray-300">
@@ -371,6 +399,17 @@ const Invest = () => {
                           }`}>
                             {inv.status}
                           </span>
+                        </td>
+                        <td className="py-3 text-right">
+                          <button
+                            onClick={() => {
+                              setSelectedDetailInvestment(inv);
+                              setDetailModalOpen(true);
+                            }}
+                            className="px-2 py-1 bg-cyanAccent text-[#0b0f19] font-bold text-[9px] rounded hover:opacity-90 transition cursor-pointer"
+                          >
+                            View Growth
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -472,13 +511,24 @@ const Invest = () => {
                         <span className="text-slate-500 dark:text-gray-400 text-[11px]">Auto Reinvest on Maturity</span>
                       </label>
 
-                      <button
-                        onClick={() => handleWithdrawProfit(inv.id)}
-                        disabled={parseFloat(inv.profit_accrued) <= 0}
-                        className="px-3 py-1 bg-emeraldAccent text-black font-bold text-[10px] rounded hover:opacity-90 transition disabled:opacity-50"
-                      >
-                        Withdraw Profit
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setSelectedDetailInvestment(inv);
+                            setDetailModalOpen(true);
+                          }}
+                          className="px-3 py-1 bg-cyanAccent text-[#0b0f19] font-bold text-[10px] rounded hover:opacity-90 transition flex items-center gap-1 cursor-pointer"
+                        >
+                          <Activity size={10} /> Yield Growth
+                        </button>
+                        <button
+                          onClick={() => handleWithdrawProfit(inv.id)}
+                          disabled={parseFloat(inv.profit_accrued) <= 0}
+                          className="px-3 py-1 bg-emeraldAccent text-black font-bold text-[10px] rounded hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
+                        >
+                          Withdraw Profit
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -690,6 +740,155 @@ const Invest = () => {
           </div>
         </div>
       )}
+
+      {/* Investment Yield Growth Detail Modal */}
+      {detailModalOpen && selectedDetailInvestment && (() => {
+        const start = new Date(selectedDetailInvestment.start_date).getTime();
+        const end = new Date(selectedDetailInvestment.end_date).getTime();
+        const total = end - start;
+        const elapsed = now - start;
+        const progress = total > 0 ? Math.min(100, Math.max(0, Math.round((elapsed / total) * 100))) : 0;
+
+        const expectedProfit = selectedDetailInvestment.expected_profit_type === 'PERCENT'
+          ? parseFloat(selectedDetailInvestment.amount) * (parseFloat(selectedDetailInvestment.expected_profit) / 100)
+          : parseFloat(selectedDetailInvestment.expected_profit);
+
+        const chartData = getSingleInvestmentChartData(selectedDetailInvestment);
+        const invProfitTransactions = transactions
+          .filter(t => t.type === 'PROFIT' && t.reference_id === String(selectedDetailInvestment.id))
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // newest first
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+            <div className="w-full max-w-3xl glass-panel p-6 sm:p-8 rounded-xl relative border border-slate-200 dark:border-gray-805 shadow-2xl my-8">
+              <button 
+                onClick={() => {
+                  setDetailModalOpen(false);
+                  setSelectedDetailInvestment(null);
+                }} 
+                className="absolute top-4 right-4 text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white transition font-bold"
+              >
+                ✕
+              </button>
+              
+              <div className="mb-4">
+                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/20">
+                  {selectedDetailInvestment.plan_details?.name || 'Investment Plan'} (ID: INV-{selectedDetailInvestment.id})
+                </span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-2 flex items-center gap-2">
+                  <TrendingUp className="text-cyanAccent" size={20} /> Profit Accrual Growth Tracker
+                </h3>
+                <p className="text-xs text-gray-450 mt-1">Real-time daily yield accumulation history and projections.</p>
+              </div>
+
+              {/* Status and Progress banner */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-100/40 dark:bg-gray-950/20 border border-slate-250 dark:border-gray-850 rounded-lg text-xs mb-6">
+                <div>
+                  <span className="text-gray-500 block mb-0.5 uppercase font-bold text-[9px]">Status</span>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold inline-block ${
+                    selectedDetailInvestment.status === 'ACTIVE' ? 'bg-emeraldAccent/15 text-emeraldAccent border border-emeraldAccent/20' :
+                    selectedDetailInvestment.status === 'PAUSED' ? 'bg-amber-500/15 text-amber-500 border border-amber-500/20' :
+                    'bg-slate-200 dark:bg-gray-800 text-slate-500'
+                  }`}>{selectedDetailInvestment.status}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500 block mb-0.5 uppercase font-bold text-[9px]">Principal Amount</span>
+                  <span className="font-bold text-slate-900 dark:text-white">${parseFloat(selectedDetailInvestment.amount).toFixed(2)} {selectedDetailInvestment.currency}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500 block mb-0.5 uppercase font-bold text-[9px]">Accrued Yield</span>
+                  <span className="font-bold text-emeraldAccent">+${parseFloat(selectedDetailInvestment.profit_accrued).toFixed(6)}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500 block mb-0.5 uppercase font-bold text-[9px]">Total Expected Payout</span>
+                  <span className="font-bold text-cyanAccent">${expectedProfit.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Left Side: Performance Chart */}
+                <div className="space-y-4">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Profit Growth Chart</h4>
+                  
+                  <div className="h-[220px] w-full bg-slate-950/20 rounded-lg p-2 border border-slate-900/30">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="invProfitGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.25}/>
+                            <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.2} />
+                        <XAxis dataKey="date" stroke="#64748b" fontSize={9} />
+                        <YAxis stroke="#64748b" fontSize={9} />
+                        <Tooltip
+                          contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '8px', fontSize: '11px', textAlign: 'left' }}
+                          labelStyle={{ color: '#94a3b8', fontWeight: 'bold' }}
+                          itemStyle={{ color: '#10b981' }}
+                        />
+                        <Area type="monotone" dataKey="profit" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#invProfitGrad)" name="Profit ($)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Progress detail */}
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between text-gray-500 font-semibold text-[10px]">
+                      <span>COMPLETION: {progress}%</span>
+                      <span>COUNTDOWN: {getRemainingTime(selectedDetailInvestment.end_date)}</span>
+                    </div>
+                    <div className="w-full bg-slate-200 dark:bg-gray-800 h-2 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-cyanAccent to-emeraldAccent" style={{ width: `${progress}%` }}></div>
+                    </div>
+                    <div className="flex justify-between text-[10px] text-gray-500 font-medium">
+                      <span>Start: {new Date(selectedDetailInvestment.start_date).toLocaleDateString()}</span>
+                      <span>End: {new Date(selectedDetailInvestment.end_date).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side: Timeline of Daily Payouts */}
+                <div className="flex flex-col h-[320px]">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Daily Yield Transaction History</h4>
+                  
+                  <div className="flex-1 overflow-y-auto divide-y divide-slate-200 dark:divide-gray-800/50 pr-2 max-h-[280px]">
+                    {invProfitTransactions.length === 0 ? (
+                      <div className="text-center text-xs text-gray-500 py-12">
+                        No profit distributions recorded yet. Daily yields accrue automatically according to your package timeline.
+                      </div>
+                    ) : (
+                      invProfitTransactions.map((tx) => (
+                        <div key={tx.id} className="py-2.5 flex justify-between items-center text-xs hover:bg-slate-100/5 px-2 rounded transition">
+                          <div className="space-y-0.5">
+                            <span className="font-semibold text-slate-900 dark:text-white block text-[11px]">{tx.description}</span>
+                            <span className="text-[9px] text-gray-550 block">{new Date(tx.created_at).toLocaleString()}</span>
+                          </div>
+                          <span className="font-bold text-emeraldAccent text-[11px]">
+                            +${parseFloat(tx.amount).toFixed(6)} {tx.currency}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-end">
+                <button
+                  onClick={() => {
+                    setDetailModalOpen(false);
+                    setSelectedDetailInvestment(null);
+                  }}
+                  className="px-6 py-2.5 border border-gray-700 rounded text-xs font-bold text-white hover:bg-gray-800 transition cursor-pointer"
+                >
+                  Close Tracker
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

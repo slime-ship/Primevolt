@@ -86,6 +86,9 @@ class AdminDashboardStatsView(views.APIView):
         pending_deposits_count = Deposit.objects.filter(status='PENDING').count()
         pending_withdrawals_count = Withdrawal.objects.filter(status='PENDING').count()
 
+        from support.models import SupportTicket
+        pending_tickets_count = SupportTicket.objects.filter(status__in=['OPEN', 'IN_PROGRESS']).count()
+
         return Response({
             'total_users': total_users,
             'total_deposits': float(total_deposits_confirmed),
@@ -93,6 +96,7 @@ class AdminDashboardStatsView(views.APIView):
             'pending_kyc_count': pending_kyc_count,
             'pending_deposits_count': pending_deposits_count,
             'pending_withdrawals_count': pending_withdrawals_count,
+            'pending_tickets_count': pending_tickets_count,
         })
 
 # CRUD Admins (Super Admin only)

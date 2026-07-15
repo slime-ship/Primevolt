@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Mail } from 'lucide-react';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
@@ -69,6 +70,15 @@ const AppLayout = () => {
         </Routes>
       </div>
       {!isAdminPath && !isDemoPath && <Footer />}
+      {!isAdminPath && !isDemoPath && (
+        <a
+          href="mailto:info.cryptoverse@gmail.com"
+          className="fixed bottom-6 left-6 z-50 p-3.5 bg-gradient-to-r from-cyanAccent to-emeraldAccent text-[#0b0f19] rounded-full shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.7)] hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center cursor-pointer border border-[#10b981]/25 animate-bounce"
+          title="Email Support"
+        >
+          <Mail size={20} />
+        </a>
+      )}
     </div>
   );
 };

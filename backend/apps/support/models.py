@@ -25,7 +25,7 @@ class SupportTicket(models.Model):
 
 class TicketMessage(models.Model):
     ticket = models.ForeignKey(SupportTicket, on_delete=models.CASCADE, related_name='messages')
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     message = models.TextField()
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

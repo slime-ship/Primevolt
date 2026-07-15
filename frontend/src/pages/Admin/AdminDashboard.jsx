@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../hooks/useTheme';
 import api from '../../api/api';
-import { Shield, Users, ArrowUpCircle, ArrowDownCircle, FileCheck, Megaphone, History, UserMinus, UserCheck, Plus, Minus, Eye, Settings, LogOut, Check, X, ShieldAlert, Award, Sun, Moon, Receipt, Trash2, Layers } from 'lucide-react';
+import { Shield, Users, ArrowUpCircle, ArrowDownCircle, FileCheck, Megaphone, History, UserMinus, UserCheck, Plus, Minus, Eye, Settings, LogOut, Check, X, ShieldAlert, Award, Sun, Moon, Receipt, Trash2, Layers, MessageSquare, LifeBuoy, Send, User } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { adminUser, adminLogout } = useAuth();
@@ -27,6 +27,14 @@ const AdminDashboard = () => {
   const [adminInvestments, setAdminInvestments] = useState([]);
   const [scheduledPayouts, setScheduledPayouts] = useState([]);
   const [globalAutomationEnabled, setGlobalAutomationEnabled] = useState(true);
+
+  // Support states
+  const [supportTickets, setSupportTickets] = useState([]);
+  const [selectedAdminTicket, setSelectedAdminTicket] = useState(null);
+  const [adminTicketDetails, setAdminTicketDetails] = useState(null);
+  const [adminReplyMessage, setAdminReplyMessage] = useState('');
+  const [adminReplying, setAdminReplying] = useState(false);
+  const adminChatEndRef = useRef(null);
 
   // Investment form states
   const [editingInvestment, setEditingInvestment] = useState(null);
@@ -109,6 +117,7 @@ const AdminDashboard = () => {
     if (activeTab === 'system_wallets') fetchAdminWalletAddresses();
     if (activeTab === 'investments') fetchAdminInvestments();
     if (activeTab === 'automation') fetchAutomationPanel();
+    if (activeTab === 'support') fetchSupportTickets();
   }, [activeTab]);
 
   const fetchStats = async () => {
@@ -210,6 +219,85 @@ const AdminDashboard = () => {
       setPlans(res.data);
     } catch (err) {
       setError('Failed to fetch investment plans.');
+    }
+  };
+
+  const fetchSupportTickets = async () => {
+    try {
+      const res = await api.get('admin/support/tickets/');
+      setSupportTickets(res.data);
+      if (res.data.length > 0 && !selectedAdminTicket) {
+        setSelectedAdminTicket(res.data[0]);
+      }
+    } catch (err) {
+      setError('Failed to fetch support tickets.');
+    }
+  };
+
+  const fetchAdminTicketDetails = async (id, isSilent = false) => {
+    try {
+      const res = await api.get(`admin/support/tickets/${id}/`);
+      setAdminTicketDetails(res.data);
+    } catch (err) {
+      if (!isSilent) {
+        setError('Failed to fetch conversation history.');
+      }
+    }
+  };
+
+  const scrollAdminChatToBottom = () => {
+    adminChatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (adminTicketDetails) {
+      scrollAdminChatToBottom();
+    }
+  }, [adminTicketDetails]);
+
+  useEffect(() => {
+    if (activeTab === 'support' && selectedAdminTicket) {
+      fetchAdminTicketDetails(selectedAdminTicket.id);
+      const interval = setInterval(() => {
+        fetchAdminTicketDetails(selectedAdminTicket.id, true);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [activeTab, selectedAdminTicket]);
+
+  const handleAdminSendReply = async (e) => {
+    e.preventDefault();
+    if (!adminReplyMessage.trim()) return;
+
+    setAdminReplying(true);
+    setError('');
+    try {
+      const res = await api.post(`admin/support/tickets/${selectedAdminTicket.id}/messages/`, {
+        message: adminReplyMessage
+      });
+      if (adminTicketDetails) {
+        setAdminTicketDetails({
+          ...adminTicketDetails,
+          messages: [...adminTicketDetails.messages, res.data]
+        });
+      }
+      setAdminReplyMessage('');
+      fetchSupportTickets();
+    } catch (err) {
+      setError('Failed to deliver message.');
+    } finally {
+      setAdminReplying(false);
+    }
+  };
+
+  const handleUpdateTicketStatus = async (id, newStatus) => {
+    try {
+      await api.patch(`admin/support/tickets/${id}/`, { status: newStatus });
+      setSuccess(`Ticket status updated to ${newStatus}.`);
+      fetchSupportTickets();
+      setSelectedAdminTicket(prev => prev ? { ...prev, status: newStatus } : null);
+    } catch (err) {
+      setError('Failed to update ticket status.');
     }
   };
 
@@ -887,6 +975,14 @@ const AdminDashboard = () => {
           }`}
         >
           <ShieldAlert size={16} /> Automation Controls
+        </button>
+        <button
+          onClick={() => setActiveTab('support')}
+          className={`pb-3 px-4 text-xs font-bold transition flex items-center gap-2 border-b-2 ${
+            activeTab === 'support' ? 'border-red-500 text-red-400' : 'border-transparent text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <MessageSquare size={16} /> Support Tickets ({stats?.pending_tickets_count || 0})
         </button>
       </div>
 
@@ -2083,6 +2179,179 @@ const AdminDashboard = () => {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'support' && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-[500px]">
+            {/* Left column: Ticket List */}
+            <div className="glass-panel rounded-xl overflow-hidden flex flex-col max-h-[600px] border border-slate-200 dark:border-gray-800">
+              <div className="p-4 border-b border-slate-200 dark:border-gray-850 bg-slate-100/40 dark:bg-gray-950/30 flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">User Tickets</span>
+                <span className="bg-slate-200 dark:bg-gray-800 text-[10px] text-slate-500 dark:text-gray-400 px-2 py-0.5 rounded-full font-bold">{supportTickets.length}</span>
+              </div>
+              <div className="overflow-y-auto divide-y divide-slate-150 dark:divide-gray-855 flex-1">
+                {supportTickets.length === 0 ? (
+                  <div className="text-center py-12 text-xs text-gray-500 px-4">
+                    <MessageSquare size={32} className="mx-auto text-slate-450 dark:text-gray-650 mb-2" />
+                    No support tickets found.
+                  </div>
+                ) : (
+                  supportTickets.map((t) => (
+                    <div
+                      key={t.id}
+                      onClick={() => setSelectedAdminTicket(t)}
+                      className={`p-4 cursor-pointer text-left transition ${
+                        selectedAdminTicket?.id === t.id ? 'bg-slate-100/60 dark:bg-[#1f2937]/35 border-l-2 border-red-500' : 'hover:bg-slate-100/20 dark:hover:bg-gray-900/30'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start gap-2 mb-1.5">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[150px]">{t.subject}</span>
+                          <span className="text-[9px] text-gray-550 font-semibold">User: {t.user_details?.full_name || `@${t.user_details?.username || t.user}`}</span>
+                        </div>
+                        <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded ${
+                          t.status === 'RESOLVED' ? 'bg-emeraldAccent/15 text-emeraldAccent' :
+                          t.status === 'CLOSED' ? 'bg-gray-850 text-gray-500' :
+                          t.status === 'IN_PROGRESS' ? 'bg-cyanAccent/15 text-cyanAccent' :
+                          'bg-yellow-500/15 text-yellow-500'
+                        }`}>
+                          {t.status}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-500 dark:text-gray-400 line-clamp-1 mb-2">{t.message}</p>
+                      <div className="flex items-center justify-between text-[9px] text-gray-500">
+                        <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold ${
+                          t.priority === 'CRITICAL' ? 'bg-red-500/15 text-red-400 border border-red-500/30' :
+                          t.priority === 'HIGH' ? 'bg-orange-500/15 text-orange-400 border border-orange-500/30' :
+                          t.priority === 'MEDIUM' ? 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/30' :
+                          'bg-blue-500/15 text-blue-400 border border-blue-500/30'
+                        }`}>
+                          {t.priority}
+                        </span>
+                        <span>{new Date(t.created_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Right column: Conversation & Control */}
+            <div className="lg:col-span-2 glass-panel rounded-xl overflow-hidden flex flex-col max-h-[600px] border border-slate-200 dark:border-gray-800">
+              {selectedAdminTicket ? (
+                <>
+                  {/* Ticket Header & Status management */}
+                  <div className="p-4 border-b border-slate-200 dark:border-gray-855 bg-slate-100/30 dark:bg-gray-950/20 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                    <div>
+                      <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">Ticket: {selectedAdminTicket.subject}</h3>
+                      <p className="text-[9px] text-gray-400 font-semibold">
+                        User: <span className="text-slate-900 dark:text-white">{selectedAdminTicket.user_details?.full_name} (@{selectedAdminTicket.user_details?.username})</span> | Email: <span className="text-slate-900 dark:text-white">{selectedAdminTicket.user_details?.email}</span>
+                      </p>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={selectedAdminTicket.status}
+                        onChange={(e) => handleUpdateTicketStatus(selectedAdminTicket.id, e.target.value)}
+                        className="p-1.5 rounded glass-input text-[10px] font-bold"
+                      >
+                        <option value="OPEN">Open</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESOLVED">Resolved</option>
+                        <option value="CLOSED">Closed</option>
+                      </select>
+                      <span className={`px-2 py-1 rounded text-[9px] font-bold uppercase ${
+                        selectedAdminTicket.priority === 'CRITICAL' ? 'bg-red-500/15 text-red-400 border border-red-500/30' :
+                        selectedAdminTicket.priority === 'HIGH' ? 'bg-orange-500/15 text-orange-400 border border-orange-500/30' :
+                        selectedAdminTicket.priority === 'MEDIUM' ? 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/30' :
+                        'bg-blue-500/15 text-blue-400 border border-blue-500/30'
+                      }`}>
+                        {selectedAdminTicket.priority} Priority
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Message Thread */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/20 dark:bg-gray-950/5">
+                    {/* User's Original Message */}
+                    <div className="flex justify-start">
+                      <div className="max-w-[85%] rounded-lg p-3 bg-slate-100 dark:bg-gray-850/80 border border-slate-200 dark:border-gray-850 text-left">
+                        <div className="flex items-center gap-1 text-[9px] font-semibold text-cyanAccent mb-1">
+                          <User size={10} />
+                          <span>{selectedAdminTicket.user_details?.full_name}</span>
+                          <span className="text-gray-500 font-normal">| Original Issue</span>
+                        </div>
+                        <p className="text-xs text-slate-900 dark:text-white whitespace-pre-wrap">{selectedAdminTicket.message}</p>
+                        <span className="block text-[8px] text-gray-500 mt-2 text-right">
+                          {new Date(selectedAdminTicket.created_at).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Replies */}
+                    {adminTicketDetails?.messages?.map((msg) => {
+                      const isAgent = msg.is_admin;
+                      return (
+                        <div key={msg.id} className={`flex ${isAgent ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`max-w-[85%] rounded-lg p-3 text-left ${
+                            isAgent 
+                              ? 'bg-gradient-to-br from-red-500/5 to-amber-500/5 border border-red-500/30 shadow-sm'
+                              : 'bg-white dark:bg-[#111827] border border-slate-250 dark:border-gray-800'
+                          }`}>
+                            <div className="flex items-center gap-1 text-[9px] font-semibold mb-1">
+                              {isAgent ? (
+                                <>
+                                  <ShieldAlert size={10} className="text-red-400" />
+                                  <span className="text-red-400">You (Support)</span>
+                                </>
+                              ) : (
+                                <>
+                                  <User size={10} className="text-cyanAccent" />
+                                  <span className="text-cyanAccent">{selectedAdminTicket.user_details?.full_name}</span>
+                                </>
+                              )}
+                            </div>
+                            <p className="text-xs text-slate-800 dark:text-white whitespace-pre-wrap">{msg.message}</p>
+                            <span className="block text-[8px] text-gray-500 mt-2 text-right">
+                              {new Date(msg.created_at).toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div ref={adminChatEndRef} />
+                  </div>
+
+                  {/* Reply Input */}
+                  <div className="p-4 border-t border-slate-200 dark:border-gray-855 bg-slate-100/30 dark:bg-gray-950/20">
+                    <form onSubmit={handleAdminSendReply} className="flex gap-2">
+                      <input
+                        type="text"
+                        required
+                        placeholder="Type reply message to user..."
+                        className="flex-1 p-2.5 rounded glass-input text-xs"
+                        value={adminReplyMessage}
+                        onChange={(e) => setAdminReplyMessage(e.target.value)}
+                      />
+                      <button
+                        type="submit"
+                        disabled={adminReplying || !adminReplyMessage.trim()}
+                        className="bg-red-500 text-white p-2.5 rounded hover:opacity-90 disabled:opacity-50 transition flex items-center justify-center aspect-square cursor-pointer"
+                      >
+                        <Send size={16} />
+                      </button>
+                    </form>
+                  </div>
+                </>
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-xs text-gray-500 py-12 px-4">
+                  <LifeBuoy size={48} className="text-slate-400 dark:text-gray-650 mb-3" />
+                  <p className="font-semibold text-slate-900 dark:text-white">No Ticket Selected</p>
+                  <p className="text-[10px] text-gray-400 mt-1">Select a ticket from the left panel to review and reply.</p>
                 </div>
               )}
             </div>

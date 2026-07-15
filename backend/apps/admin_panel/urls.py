@@ -7,6 +7,7 @@ from .views import (
     AdminAuditLogViewSet, broadcast_notification, AdminVIPUpgradeViewSet,
     AdminTransactionViewSet, AdminInvestmentViewSet
 )
+from support.views import AdminSupportTicketViewSet
 
 router = DefaultRouter()
 router.register(r'admins', AdminViewSet, basename='admin')
@@ -20,6 +21,7 @@ router.register(r'audit-logs', AdminAuditLogViewSet, basename='admin_auditlog')
 router.register(r'vip-upgrades', AdminVIPUpgradeViewSet, basename='admin_vip_upgrade')
 router.register(r'transactions', AdminTransactionViewSet, basename='admin_transaction')
 router.register(r'investments', AdminInvestmentViewSet, basename='admin_investment')
+router.register(r'support/tickets', AdminSupportTicketViewSet, basename='admin_support_ticket')
 
 
 urlpatterns = [
