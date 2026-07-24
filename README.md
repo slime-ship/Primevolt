@@ -1,6 +1,6 @@
-# Antigravity Crypto Investment Platform
+# PrimeVolt Crypto Investment Platform
 
-Antigravity is a modern, secure, and premium cryptocurrency investment and brokerage platform.
+PrimeVolt is a modern, secure, and premium cryptocurrency investment and brokerage platform.
 
 ## Project Structure
 - `backend/`: Django REST Framework (DRF) backend.

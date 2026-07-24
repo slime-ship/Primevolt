@@ -60,7 +60,7 @@ const Referrals = () => {
 
       <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Referral Program</h1>
       <p className="text-xs text-slate-500 dark:text-gray-400 mb-8 leading-relaxed">
-        Invite your business colleagues, associates, or community members to Cryptic Verse.
+        Invite your business colleagues, associates, or community members to PrimeVolt.
         Earn <span className="text-emeraldAccent font-bold">$10.00 USDT</span> directly credited for every valid registrant, and your invitees will receive a <span className="text-cyanAccent font-bold">$5.00 USDT</span> signup bonus.
       </p>
 

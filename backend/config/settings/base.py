@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-antigravity-platform-secret-key-12345')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-primevolt-platform-secret-key-12345')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -149,9 +149,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'crypticverse8@gmail.com'
+EMAIL_HOST_USER = 'primevolt8@gmail.com'
 EMAIL_HOST_PASSWORD = 'qvyh xwyq sshg agif'
-DEFAULT_FROM_EMAIL = 'Cryptic Verse <crypticverse8@gmail.com>'
+DEFAULT_FROM_EMAIL = 'PrimeVolt <primevolt8@gmail.com>'
 
 # Frontend Configuration
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')

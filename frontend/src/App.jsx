@@ -72,7 +72,7 @@ const AppLayout = () => {
       {!isAdminPath && !isDemoPath && <Footer />}
       {!isAdminPath && !isDemoPath && (
         <a
-          href="mailto:info.cryptoverse@gmail.com"
+          href="mailto:info.primevolt@gmail.com"
           className="fixed bottom-6 left-6 z-50 p-3.5 bg-gradient-to-r from-cyanAccent to-emeraldAccent text-[#0b0f19] rounded-full shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.7)] hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center cursor-pointer border border-[#10b981]/25 animate-bounce"
           title="Email Support"
         >

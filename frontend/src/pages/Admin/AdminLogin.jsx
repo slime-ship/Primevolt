@@ -33,7 +33,7 @@ const AdminLogin = () => {
 
         <div className="text-center mb-8">
           <ShieldAlert className="mx-auto text-red-400 mb-3" size={40} />
-          <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-wider">Antigravity Terminal</h2>
+          <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-wider">PrimeVolt Terminal</h2>
           <p className="text-xs text-gray-500 mt-1">Authorized Administrative Staff Access Only</p>
         </div>
 
@@ -50,7 +50,7 @@ const AdminLogin = () => {
               <input
                 type="text"
                 required
-                placeholder="staff@antigravity.com or username"
+                placeholder="staff@primevolt.com or username"
                 className="w-full p-3 rounded glass-input text-xs pl-10"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

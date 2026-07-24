@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../api/api';
 import { LifeBuoy, Plus, Send, Clock, AlertCircle, MessageSquare, Check, User, ShieldAlert } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Support = () => {
+  const { t } = useTranslation();
   const [tickets, setTickets] = useState([]);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [ticketDetails, setTicketDetails] = useState(null);
@@ -158,15 +160,15 @@ const Support = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <LifeBuoy className="text-cyanAccent animate-pulse" /> Support Operations Center
+            <LifeBuoy className="text-cyanAccent animate-pulse" /> {t('Support Operations Center')}
           </h1>
-          <p className="text-xs text-gray-400">Initiate tickets and chat directly with our financial support specialists.</p>
+          <p className="text-xs text-gray-400">{t('Initiate tickets and chat directly with our financial support specialists.')}</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
           className="flex items-center gap-2 bg-gradient-to-r from-cyanAccent to-emeraldAccent text-black px-4 py-2 rounded text-xs font-bold hover:opacity-90 transition"
         >
-          <Plus size={16} /> New Support Ticket
+          <Plus size={16} /> {t('New Support Ticket')}
         </button>
       </div>
 
@@ -186,7 +188,7 @@ const Support = () => {
         {/* Ticket List column */}
         <div className="glass-panel rounded-xl overflow-hidden flex flex-col max-h-[600px] border border-slate-200 dark:border-gray-800">
           <div className="p-4 border-b border-slate-200 dark:border-gray-850 bg-slate-100/40 dark:bg-gray-950/30 flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Your Support Tickets</span>
+            <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">{t('Your Support Tickets')}</span>
             <span className="bg-slate-200 dark:bg-gray-800 text-[10px] text-slate-500 dark:text-gray-400 px-2 py-0.5 rounded-full font-bold">{tickets.length}</span>
           </div>
 
@@ -194,29 +196,29 @@ const Support = () => {
             {tickets.length === 0 ? (
               <div className="text-center py-12 text-xs text-gray-500 px-4">
                 <MessageSquare size={32} className="mx-auto text-slate-450 dark:text-gray-650 mb-2" />
-                No tickets filed. Click 'New Support Ticket' to start a session.
+                {t('No tickets filed. Click \'New Support Ticket\' to start a session.')}
               </div>
             ) : (
-              tickets.map((t) => (
+              tickets.map((tItem) => (
                 <div
-                  key={t.id}
-                  onClick={() => setSelectedTicket(t)}
+                  key={tItem.id}
+                  onClick={() => setSelectedTicket(tItem)}
                   className={`p-4 cursor-pointer text-left transition ${
-                    selectedTicket?.id === t.id ? 'bg-slate-100/60 dark:bg-[#1f2937]/35 border-l-2 border-cyanAccent' : 'hover:bg-slate-100/20 dark:hover:bg-gray-900/30'
+                    selectedTicket?.id === tItem.id ? 'bg-slate-100/60 dark:bg-[#1f2937]/35 border-l-2 border-cyanAccent' : 'hover:bg-slate-100/20 dark:hover:bg-gray-900/30'
                   }`}
                 >
                   <div className="flex justify-between items-start gap-2 mb-1.5">
-                    <span className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[150px]">{t.subject}</span>
-                    <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded ${getStatusStyle(t.status)}`}>
-                      {t.status}
+                    <span className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[150px]">{tItem.subject}</span>
+                    <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded ${getStatusStyle(tItem.status)}`}>
+                      {tItem.status}
                     </span>
                   </div>
-                  <p className="text-[10px] text-slate-500 dark:text-gray-400 line-clamp-1 mb-2">{t.message}</p>
+                  <p className="text-[10px] text-slate-500 dark:text-gray-400 line-clamp-1 mb-2">{tItem.message}</p>
                   <div className="flex items-center justify-between text-[9px] text-gray-500">
-                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold ${getPriorityStyle(t.priority)}`}>
-                      {t.priority}
+                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold ${getPriorityStyle(tItem.priority)}`}>
+                      {tItem.priority}
                     </span>
-                    <span>{new Date(t.created_at).toLocaleDateString()}</span>
+                    <span>{new Date(tItem.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
               ))
@@ -231,12 +233,12 @@ const Support = () => {
               {/* Ticket header status banner */}
               <div className="p-4 border-b border-slate-200 dark:border-gray-850 bg-slate-100/30 dark:bg-gray-950/20 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                 <div>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">Ticket: {selectedTicket.subject}</h3>
-                  <p className="text-[9px] text-gray-400">Created: {new Date(selectedTicket.created_at).toLocaleString()}</p>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">{t('Ticket: ')}{selectedTicket.subject}</h3>
+                  <p className="text-[9px] text-gray-400">{t('Created: ')}{new Date(selectedTicket.created_at).toLocaleString()}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${getPriorityStyle(selectedTicket.priority)}`}>
-                    {selectedTicket.priority} Priority
+                    {selectedTicket.priority} {t('Priority')}
                   </span>
                   <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${getStatusStyle(selectedTicket.status)}`}>
                     {selectedTicket.status}
@@ -275,7 +277,7 @@ const Support = () => {
                           {isAgent ? (
                             <>
                               <ShieldAlert size={10} className="text-emeraldAccent" />
-                              <span className="text-emeraldAccent">Support Specialist</span>
+                              <span className="text-emeraldAccent">{t('Support Specialist')}</span>
                             </>
                           ) : (
                             <>
@@ -298,13 +300,13 @@ const Support = () => {
               {/* Chat Input panel */}
               <div className="p-4 border-t border-slate-200 dark:border-gray-850 bg-slate-100/30 dark:bg-gray-950/20">
                 {selectedTicket.status === 'CLOSED' && (
-                  <p className="text-[10px] text-yellow-500 mb-2">⚠ This ticket is closed. Typing a reply will automatically reopen this support thread.</p>
+                  <p className="text-[10px] text-yellow-500 mb-2">⚠ {t('This ticket is closed. Typing a reply will automatically reopen this support thread.')}</p>
                 )}
                 <form onSubmit={handleSendReply} className="flex gap-2">
                   <input
                     type="text"
                     required
-                    placeholder="Type your message to support..."
+                    placeholder={t('Type your message to support...')}
                     className="flex-1 p-2.5 rounded glass-input text-xs"
                     value={replyMessage}
                     onChange={(e) => setReplyMessage(e.target.value)}
@@ -322,8 +324,8 @@ const Support = () => {
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-xs text-gray-500 py-12 px-4">
               <LifeBuoy size={48} className="text-slate-400 dark:text-gray-650 mb-3" />
-              <p className="font-semibold text-slate-900 dark:text-white">No Ticket Selected</p>
-              <p className="text-[10px] text-gray-400 mt-1">Select a ticket from the left panel or start a new support thread.</p>
+              <p className="font-semibold text-slate-900 dark:text-white">{t('No Ticket Selected')}</p>
+              <p className="text-[10px] text-gray-400 mt-1">{t('Select a ticket from the left panel or start a new support thread.')}</p>
             </div>
           )}
         </div>
@@ -333,10 +335,10 @@ const Support = () => {
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-lg bg-white dark:bg-[#111827] border border-slate-200 dark:border-gray-850 rounded-xl shadow-2xl p-6 text-left">
-            <h3 className="text-sm font-bold text-slate-950 dark:text-white mb-4">File Support Request Ticket</h3>
+            <h3 className="text-sm font-bold text-slate-950 dark:text-white mb-4">{t('File Support Request Ticket')}</h3>
             <form onSubmit={handleCreateTicket} className="space-y-4">
               <div>
-                <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">Subject / Core Issue</label>
+                <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Subject / Core Issue')}</label>
                 <input
                   type="text"
                   required
@@ -348,21 +350,21 @@ const Support = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">Priority Level</label>
+                <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Priority Level')}</label>
                 <select
                   className="w-full p-2.5 rounded glass-input text-xs"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
                 >
-                  <option value="LOW">Low - General Question</option>
-                  <option value="MEDIUM">Medium - Technical Problem</option>
-                  <option value="HIGH">High - Transaction Hold</option>
-                  <option value="CRITICAL">Critical - Compromised Account</option>
+                  <option value="LOW">{t('Low - General Question')}</option>
+                  <option value="MEDIUM">{t('Medium - Technical Problem')}</option>
+                  <option value="HIGH">{t('High - Transaction Hold')}</option>
+                  <option value="CRITICAL">{t('Critical - Compromised Account')}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">Detailed Description</label>
+                <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Detailed Description')}</label>
                 <textarea
                   required
                   rows={4}

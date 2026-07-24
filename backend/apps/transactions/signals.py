@@ -24,7 +24,7 @@ def send_transaction_email(tx):
         except Exception:
             pass
         
-    subject = f"{action_type}: {abs(tx.amount):.2f} {tx.currency} at Cryptic Verse"
+    subject = f"{action_type}: {abs(tx.amount):.2f} {tx.currency} at PrimeVolt"
     
     message = (
         f"Dear {user.full_name or user.username},\n\n"
@@ -35,9 +35,9 @@ def send_transaction_email(tx):
         f"Description: {tx.description or 'N/A'}\n"
         f"Date: {tx.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') if tx.created_at else 'Just now'}\n\n"
         f"{wallet_balance_str}\n\n"
-        f"Thank you for choosing Cryptic Verse.\n\n"
+        f"Thank you for choosing PrimeVolt.\n\n"
         f"Best regards,\n"
-        f"The Cryptic Verse Team"
+        f"The PrimeVolt Team"
     )
     
     try:

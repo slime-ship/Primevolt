@@ -73,9 +73,11 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       // Return first field error or general error
       const errs = err.response?.data || {};
-      const errorMsg = Object.keys(errs)
-        .map((k) => `${k}: ${errs[k]}`)
-        .join(' | ') || 'Registration failed.';
+      const errorMsg = typeof errs === 'object' && errs !== null
+        ? Object.entries(errs)
+            .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+            .join(' | ') || 'Registration failed.'
+        : 'Registration failed.';
       return { success: false, error: errorMsg };
     }
   };

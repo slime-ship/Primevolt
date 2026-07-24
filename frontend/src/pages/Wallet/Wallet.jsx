@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../api/api';
 import { Copy, Plus, RefreshCw, Clock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const WalletView = () => {
+  const { t } = useTranslation();
   const { user, fetchUserMe } = useAuth();
   const [wallets, setWallets] = useState([]);
   const [ledger, setLedger] = useState([]);
@@ -66,8 +68,8 @@ const WalletView = () => {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 min-h-[calc(100vh-4rem)] text-left">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white font-sans">Wallets & Assets</h1>
-          <p className="text-xs text-gray-400">Generate addresses and check your ledger balances.</p>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white font-sans">{t('Wallets & Assets')}</h1>
+          <p className="text-xs text-gray-400">{t('Generate addresses and check your ledger balances.')}</p>
         </div>
         <button
           onClick={fetchData}
@@ -86,9 +88,9 @@ const WalletView = () => {
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-sm font-black text-slate-900 dark:text-white tracking-widest">{w.currency} WALLET</span>
+              <span className="text-sm font-black text-slate-900 dark:text-white tracking-widest">{w.currency} {t('WALLET')}</span>
               <span className="px-2 py-0.5 rounded text-[9px] font-semibold bg-slate-100 dark:bg-gray-800 text-cyanAccent">
-                Active
+                {t('Active')}
               </span>
             </div>
 
@@ -99,7 +101,7 @@ const WalletView = () => {
               <span className="text-xs text-gray-500 ml-1">{w.currency}</span>
               {parseFloat(w.locked_balance) > 0 && (
                 <span className="text-[10px] text-yellow-500 block mt-0.5">
-                  Locked: {parseFloat(w.locked_balance).toFixed(6)} {w.currency} (Pending withdrawal)
+                  {t('Locked: ')}{parseFloat(w.locked_balance).toFixed(6)} {w.currency} {t('(Pending withdrawal)')}
                 </span>
               )}
             </div>
@@ -114,13 +116,13 @@ const WalletView = () => {
                   className="text-cyanAccent hover:text-slate-900 dark:hover:text-white transition"
                   title="Copy Address"
                 >
-                  <span className="text-[10px] mr-1">{copiedIndex === index ? 'Copied' : ''}</span>
+                  <span className="text-[10px] mr-1">{copiedIndex === index ? t('Copied') : ''}</span>
                   <Copy size={12} className="inline" />
                 </button>
               </div>
             ) : (
               <div className="text-[10px] text-red-500 dark:text-red-400 font-bold mt-2">
-                no wallet address for currency
+                {t('no wallet address for currency')}
               </div>
             )}
           </div>
@@ -129,7 +131,7 @@ const WalletView = () => {
         {/* Generate New Wallet card */}
         {unassignedCurrencies.length > 0 && (
           <div className="glass-panel p-6 rounded-xl border-dashed border-slate-300 dark:border-gray-700 flex flex-col justify-center items-center h-48 text-center">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">Generate New Address</h3>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">{t('Generate New Address')}</h3>
             <div className="flex gap-2">
               <select
                 value={selectedCurrency}
@@ -145,7 +147,7 @@ const WalletView = () => {
                 disabled={creating}
                 className="bg-cyanAccent text-black font-bold text-xs px-4 py-2 rounded hover:opacity-90 transition flex items-center gap-1"
               >
-                <Plus size={16} /> Generate
+                <Plus size={16} /> {t('Generate')}
               </button>
             </div>
           </div>
@@ -154,24 +156,24 @@ const WalletView = () => {
 
       {/* Ledger History */}
       <div className="glass-panel rounded-xl p-6">
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-6">Complete Account Ledger</h3>
+        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-6">{t('Complete Account Ledger')}</h3>
         {ledger.length === 0 ? (
           <div className="text-center py-12 text-xs text-gray-500 flex flex-col items-center">
             <Clock size={32} className="text-gray-600 mb-2" />
-            No transaction records in your ledger history.
+            {t('No transaction records in your ledger history.')}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-gray-850 text-slate-500 dark:text-gray-400 font-semibold uppercase tracking-wider">
-                  <th className="pb-3">Transaction ID</th>
-                  <th className="pb-3">Type</th>
-                  <th className="pb-3">Amount</th>
-                  <th className="pb-3">Currency</th>
-                  <th className="pb-3">Description</th>
-                  <th className="pb-3">Date</th>
-                  <th className="pb-3">Status</th>
+                  <th className="pb-3">{t('Transaction ID')}</th>
+                  <th className="pb-3">{t('Type')}</th>
+                  <th className="pb-3">{t('Amount')}</th>
+                  <th className="pb-3">{t('Currency')}</th>
+                  <th className="pb-3">{t('Description')}</th>
+                  <th className="pb-3">{t('Date')}</th>
+                  <th className="pb-3">{t('Status')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-150 dark:divide-gray-800/40 text-slate-700 dark:text-gray-300">

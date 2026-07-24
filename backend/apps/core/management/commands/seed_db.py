@@ -116,8 +116,8 @@ class Command(BaseCommand):
 
         # 5. Seed general website settings
         settings = [
-            {'key': 'company_name', 'value': 'Cryptic Verse', 'category': 'general', 'description': 'Name of the website'},
-            {'key': 'support_email', 'value': 'support@crypticverse.com', 'category': 'general', 'description': 'Public support email'},
+            {'key': 'company_name', 'value': 'PrimeVolt', 'category': 'general', 'description': 'Name of the website'},
+            {'key': 'support_email', 'value': 'support@primevolt.com', 'category': 'general', 'description': 'Public support email'},
             {'key': 'min_withdrawal_limit', 'value': 10.00, 'category': 'security', 'description': 'Minimum withdrawal allowed'},
             {'key': 'max_withdrawal_limit', 'value': 50000.00, 'category': 'security', 'description': 'Maximum withdrawal allowed per transaction'},
         ]

@@ -13,7 +13,7 @@ const Footer = () => {
                 </svg>
               </div>
               <span className="text-lg font-bold text-slate-900 dark:text-white">
-                Cryptic Verse
+                PrimeVolt
               </span>
             </div>
             <p className="mt-4 text-sm max-w-md text-slate-500 dark:text-gray-405">
@@ -38,7 +38,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-8 border-t border-slate-200 dark:border-gray-800 pt-8 text-center text-xs">
-          <p>© {new Date().getFullYear()} Cryptic Verse, Inc. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} PrimeVolt, Inc. All rights reserved.</p>
         </div>
       </div>
     </footer>

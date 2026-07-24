@@ -40,9 +40,9 @@ def get_public_settings(request):
         
     # Default values if empty
     defaults = {
-        'company_name': 'Cryptic Verse',
-        'support_email': 'support@crypticverse.com',
-        'footer_text': '© 2026 Cryptic Verse Platform. All rights reserved.',
+        'company_name': 'PrimeVolt',
+        'support_email': 'support@primevolt.com',
+        'footer_text': '© 2026 PrimeVolt Platform. All rights reserved.',
         'contact_phone': '+1 (800) 555-0199',
     }
     

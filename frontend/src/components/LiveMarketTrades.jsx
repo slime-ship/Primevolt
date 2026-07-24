@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const INITIAL_COINS = [
   { name: 'Bitcoin', symbol: 'BTC', price: 64230.50, change24h: 2.45, volume: '28.4B', high: 64800.00, low: 62900.00 },
@@ -11,9 +12,10 @@ const INITIAL_COINS = [
 ];
 
 const LiveMarketTrades = () => {
+  const { t } = useTranslation();
   const [coins, setCoins] = useState(INITIAL_COINS);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [blinkStates, setBlinkStates] = useState({}); // { symbol: 'up' | 'down' | null }
+  const [blinkStates, setBlinkStates] = useState(new Map()); // Map of symbol => 'up' | 'down' | null
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -33,9 +35,17 @@ const LiveMarketTrades = () => {
             const newPrice = coin.price + priceDiff;
             const direction = priceDiff >= 0 ? 'up' : 'down';
             
-            setBlinkStates((prev) => ({ ...prev, [coin.symbol]: direction }));
+            setBlinkStates((prev) => {
+              const next = new Map(prev);
+              next.set(coin.symbol, direction);
+              return next;
+            });
             setTimeout(() => {
-              setBlinkStates((prev) => ({ ...prev, [coin.symbol]: null }));
+              setBlinkStates((prev) => {
+                const next = new Map(prev);
+                next.delete(coin.symbol);
+                return next;
+              });
             }, 1000);
 
             const newChange = coin.change24h + (percentChange * 100);
@@ -62,13 +72,13 @@ const LiveMarketTrades = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            Live Market Trades <span className="h-2 w-2 rounded-full bg-emeraldAccent animate-pulse"></span>
+            {t('Live Market Trades')} <span className="h-2 w-2 rounded-full bg-emeraldAccent animate-pulse"></span>
           </h3>
-          <p className="text-[10px] text-gray-400">Popular digital currencies observed in real-time.</p>
+          <p className="text-[10px] text-gray-400">{t('Popular digital currencies observed in real-time.')}</p>
         </div>
         <div className="flex items-center gap-2 text-[10px] text-gray-500">
           <RefreshCw size={12} className="animate-spin-slow" />
-          <span>Updated: {lastUpdated.toLocaleTimeString()}</span>
+          <span>{t('Updated: ')}{lastUpdated.toLocaleTimeString()}</span>
         </div>
       </div>
 
@@ -76,18 +86,18 @@ const LiveMarketTrades = () => {
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-slate-200 dark:border-gray-800 text-slate-500 dark:text-gray-400 font-semibold uppercase tracking-wider">
-              <th className="pb-3">Asset</th>
-              <th className="pb-3 text-right">Price</th>
-              <th className="pb-3 text-right">24h Change</th>
-              <th className="pb-3 text-right hidden sm:table-cell">24h High / Low</th>
-              <th className="pb-3 text-right hidden sm:table-cell">Volume (24h)</th>
-              <th className="pb-3 text-center">Trend</th>
+              <th className="pb-3">{t('Asset')}</th>
+              <th className="pb-3 text-right">{t('Price')}</th>
+              <th className="pb-3 text-right">{t('24h Change')}</th>
+              <th className="pb-3 text-right hidden sm:table-cell">{t('24h High / Low')}</th>
+              <th className="pb-3 text-right hidden sm:table-cell">{t('Volume (24h)')}</th>
+              <th className="pb-3 text-center">{t('Trend')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-gray-800/40 text-slate-700 dark:text-gray-300">
             {coins.map((coin) => {
               const isPositive = coin.change24h >= 0;
-              const blink = blinkStates[coin.symbol];
+              const blink = blinkStates.get(coin.symbol) || null;
               let rowBlinkClass = "";
               if (blink === 'up') {
                 rowBlinkClass = "bg-emeraldAccent/5 transition-colors duration-150";

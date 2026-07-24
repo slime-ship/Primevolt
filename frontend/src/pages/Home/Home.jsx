@@ -125,7 +125,7 @@ const Home = () => {
               with precision.
             </h1>
             <p className="max-w-md text-sm text-slate-650 dark:text-gray-400 leading-relaxed">
-              Join over a million users who trust <span className="font-semibold text-slate-900 dark:text-white">Cryptic Verse</span> for high-yield cryptocurrency brokerage and secure assets protection.
+              Join over a million users who trust <span className="font-semibold text-slate-900 dark:text-white">PrimeVolt</span> for high-yield cryptocurrency brokerage and secure assets protection.
             </p>
           </div>
 

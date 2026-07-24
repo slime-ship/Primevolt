@@ -387,7 +387,7 @@ class EmailVerificationAndDailyProfitTests(APITestCase):
         user = User.objects.get(username='verifyuser')
         self.assertFalse(user.is_email_verified)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("Verify Your Cryptic Verse Account", mail.outbox[0].subject)
+        self.assertIn("Verify Your PrimeVolt Account", mail.outbox[0].subject)
 
         # Attempt to login (should fail because not verified)
         login_url = '/api/v1/auth/login/'

@@ -84,7 +84,7 @@ export default function MoneyflowLandingPage() {
               <path d="M4 12c5 0 4-8 10-8 0 3 6 3 6 8s-6 5-6 8c-6 0-5-8-10-8Z" fill="currentColor" />
             </svg>
           </div>
-          <span className="font-jakarta text-xl font-semibold tracking-tight text-slate-900">Cryptic Verse</span>
+          <span className="font-jakarta text-xl font-semibold tracking-tight text-slate-900">PrimeVolt</span>
         </div>
         <div className="hidden items-center gap-8 md:flex">
           {['Solutions','Product','Company','Insight'].map((item)=> (
@@ -106,7 +106,7 @@ export default function MoneyflowLandingPage() {
               with precision.
             </h1>
             <p className="mt-4 max-w-md text-slate-650">
-              Join over a million people who choose <span className="font-medium text-slate-900">Cryptic Verse</span> for fast and secure future banking.
+              Join over a million people who choose <span className="font-medium text-slate-900">PrimeVolt</span> for fast and secure future banking.
             </p>
           </div>
 
@@ -205,7 +205,7 @@ export default function MoneyflowLandingPage() {
       </div>
 
       <footer className="mx-auto w-full max-w-[1180px] px-4 pb-10 text-center text-xs text-slate-400 md:px-0">
-        © {new Date().getFullYear()} Cryptic Verse, Inc. All rights reserved.
+        © {new Date().getFullYear()} PrimeVolt, Inc. All rights reserved.
       </footer>
     </div>
   );

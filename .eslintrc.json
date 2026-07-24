@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "react/jsx-no-literals": "off",
+    "jsx-element-not-internationalized": "off",
+    "i18next/no-literal-string": "off"
+  }
+}

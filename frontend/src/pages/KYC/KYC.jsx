@@ -95,7 +95,7 @@ const KYC = () => {
 
     try {
       // Simulate secure Cloud Upload of the ID document
-      const mockUrl = `https://antigravity-storage.s3.amazonaws.com/kyc/${user?.username}_${docType.toLowerCase()}_${Date.now()}.png`;
+      const mockUrl = `https://primevolt-storage.s3.amazonaws.com/kyc/${user?.username}_${docType.toLowerCase()}_${Date.now()}.png`;
       
       await api.post('kyc/documents/', {
         document_type: docType,
@@ -134,7 +134,7 @@ const KYC = () => {
       await api.put('users/me/', { ssn });
 
       // Step B: Submit Selfie Document review
-      const mockSelfieUrl = `https://antigravity-storage.s3.amazonaws.com/kyc/${user?.username}_selfie_${Date.now()}.png`;
+      const mockSelfieUrl = `https://primevolt-storage.s3.amazonaws.com/kyc/${user?.username}_selfie_${Date.now()}.png`;
       await api.post('kyc/documents/', {
         document_type: 'SELFIE',
         document_number: `SELFIE-${user?.id}`,

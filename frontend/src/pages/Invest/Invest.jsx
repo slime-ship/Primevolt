@@ -4,8 +4,10 @@ import api from '../../api/api';
 import { ArrowLeft, Play, RefreshCw, Layers, Sparkles, HelpCircle, Shield, TrendingUp, Calendar, Clock, DollarSign, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 const Invest = () => {
+  const { t } = useTranslation();
   const { user, fetchUserMe } = useAuth();
   const [plans, setPlans] = useState([]);
   const [investments, setInvestments] = useState([]);
@@ -280,7 +282,7 @@ const Invest = () => {
         <ArrowLeft size={14} /> Back to Dashboard
       </Link>
 
-      <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-6">Investment Portal</h1>
+      <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-6">{t('Investment Portal')}</h1>
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-slate-200 dark:border-gray-800 pb-4 mb-8">
@@ -292,7 +294,7 @@ const Invest = () => {
               : 'text-gray-400 hover:text-white hover:bg-slate-800/30'
           }`}
         >
-          <Sparkles size={14} /> Investment Plans
+          <Sparkles size={14} /> {t('Investment Plans')}
         </button>
         <button
           onClick={() => setActiveTab('portfolios')}
@@ -302,7 +304,7 @@ const Invest = () => {
               : 'text-gray-400 hover:text-white hover:bg-slate-800/30'
           }`}
         >
-          <Layers size={14} /> Active Portfolios ({activeInvestments.length})
+          <Layers size={14} /> {t('Active Portfolios')} ({activeInvestments.length})
         </button>
         <button
           onClick={() => setActiveTab('analytics')}
@@ -312,7 +314,7 @@ const Invest = () => {
               : 'text-gray-400 hover:text-white hover:bg-slate-800/30'
           }`}
         >
-          <TrendingUp size={14} /> Profit Analytics
+          <TrendingUp size={14} /> {t('Profit Analytics')}
         </button>
       </div>
 
@@ -321,7 +323,7 @@ const Invest = () => {
           {/* Plans List */}
           <div className="mb-12">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider flex items-center gap-2">
-              <Sparkles size={18} className="text-cyanAccent" /> Active Investment Plans
+              <Sparkles size={18} className="text-cyanAccent" /> {t('Active Investment Plans')}
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -331,26 +333,26 @@ const Invest = () => {
                   
                   <div>
                     <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/20">
-                      {plan.compounding ? 'Compound Return' : 'Fixed Return'}
+                      {plan.compounding ? t('Compound Return') : t('Fixed Return')}
                     </span>
                     <h3 className="text-xl font-black text-slate-900 dark:text-white mt-4">{plan.name}</h3>
                     
                     <div className="mt-6 space-y-3 text-xs text-slate-500 dark:text-gray-400">
                       <div className="flex justify-between border-b border-slate-200 dark:border-gray-800 pb-2">
-                        <span>Daily Profit:</span>
+                        <span>{t('Daily Profit:')}</span>
                         <span className="font-bold text-emeraldAccent">+{plan.daily_profit_percent}%</span>
                       </div>
                       <div className="flex justify-between border-b border-slate-200 dark:border-gray-800 pb-2">
-                        <span>Min Investment:</span>
+                        <span>{t('Min Investment:')}</span>
                         <span className="font-semibold text-slate-900 dark:text-white">${parseFloat(plan.min_deposit).toLocaleString()} USDT</span>
                       </div>
                       <div className="flex justify-between border-b border-slate-200 dark:border-gray-800 pb-2">
-                        <span>Max Investment:</span>
+                        <span>{t('Max Investment:')}</span>
                         <span className="font-semibold text-slate-900 dark:text-white">${parseFloat(plan.max_deposit).toLocaleString()} USDT</span>
                       </div>
                       <div className="flex justify-between pb-2">
-                        <span>Duration:</span>
-                        <span className="font-semibold text-slate-900 dark:text-white">{plan.duration_days} Days</span>
+                        <span>{t('Duration:')}</span>
+                        <span className="font-semibold text-slate-900 dark:text-white">{plan.duration_days} {t('Days')}</span>
                       </div>
                     </div>
                   </div>
@@ -359,7 +361,7 @@ const Invest = () => {
                     onClick={() => openInvestModal(plan)}
                     className="w-full mt-8 rounded bg-gradient-to-r from-cyanAccent to-emeraldAccent py-3 text-xs font-bold text-black hover:opacity-90 transition flex items-center justify-center gap-1"
                   >
-                    <Play size={14} className="fill-current" /> Invest In Plan
+                    <Play size={14} className="fill-current" /> {t('Invest In Plan')}
                   </button>
                 </div>
               ))}
@@ -369,19 +371,19 @@ const Invest = () => {
           {/* Completed Investments history */}
           {pastInvestments.length > 0 && (
             <div className="glass-panel p-6 rounded-xl">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-6">Completed Investments</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-6">{t('Completed Investments')}</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="border-b border-slate-200 dark:border-gray-850 text-slate-555 dark:text-gray-400 font-semibold">
-                      <th className="pb-3">ID</th>
-                      <th className="pb-3">Plan</th>
-                      <th className="pb-3">Amount</th>
-                      <th className="pb-3">Accrued Profit</th>
-                      <th className="pb-3">Start Date</th>
-                      <th className="pb-3">End Date</th>
-                      <th className="pb-3">Status</th>
-                      <th className="pb-3 text-right">Actions</th>
+                      <th className="pb-3">{t('ID')}</th>
+                      <th className="pb-3">{t('Plan')}</th>
+                      <th className="pb-3">{t('Amount')}</th>
+                      <th className="pb-3">{t('Accrued Profit')}</th>
+                      <th className="pb-3">{t('Start Date')}</th>
+                      <th className="pb-3">{t('End Date')}</th>
+                      <th className="pb-3">{t('Status')}</th>
+                      <th className="pb-3 text-right">{t('Actions')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-150 dark:divide-gray-800/45 text-slate-700 dark:text-gray-300">

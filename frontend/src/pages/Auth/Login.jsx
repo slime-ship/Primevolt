@@ -52,7 +52,7 @@ const Login = () => {
       if (permission === 'granted') {
         setNotificationMessage({ type: 'success', text: 'Notifications enabled successfully!' });
         try {
-          new Notification("Cryptic Verse", {
+          new Notification("PrimeVolt", {
             body: "Notifications enabled! You will receive credit and debit alerts here.",
           });
         } catch (e) {

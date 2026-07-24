@@ -3,8 +3,10 @@ import { useAuth } from '../../hooks/useAuth';
 import api from '../../api/api';
 import { ArrowLeft, Upload, CheckCircle, Copy } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Deposit = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [wallets, setWallets] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState('USDT');
@@ -114,31 +116,31 @@ const Deposit = () => {
         <ArrowLeft size={14} /> Back to Dashboard
       </Link>
 
-      <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-8">Deposit Crypto Funds</h1>
+      <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-8">{t('Deposit Crypto Funds')}</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         {/* Deposit details card */}
         <div className="lg:col-span-2 glass-panel p-6 sm:p-8 rounded-xl space-y-6">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Step 1: Send Funds</h3>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">{t('Step 1: Send Funds')}</h3>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="text-xs font-semibold text-gray-400 block mb-2">Select Asset</label>
+              <label className="text-xs font-semibold text-gray-400 block mb-2">{t('Select Asset')}</label>
               <select
                 value={selectedCurrency}
                 onChange={(e) => setSelectedCurrency(e.target.value)}
                 className="w-full rounded p-3 text-xs glass-input"
               >
-                <option value="USDT">USDT (ERC-20)</option>
-                <option value="BTC">Bitcoin (BTC)</option>
-                <option value="ETH">Ethereum (ETH)</option>
-                <option value="BNB">Binance Coin (BNB)</option>
-                <option value="SOL">Solana (SOL)</option>
+                <option value="USDT">{t('USDT (ERC-20)')}</option>
+                <option value="BTC">{t('Bitcoin (BTC)')}</option>
+                <option value="ETH">{t('Ethereum (ETH)')}</option>
+                <option value="BNB">{t('Binance Coin (BNB)')}</option>
+                <option value="SOL">{t('Solana (SOL)')}</option>
               </select>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-gray-400 block mb-2">Your receiving address</label>
+              <label className="text-xs font-semibold text-gray-400 block mb-2">{t('Your receiving address')}</label>
               <div className="p-3 bg-slate-100 dark:bg-[#111827] border border-slate-200 dark:border-gray-800 rounded text-xs text-cyanAccent select-all font-mono">
                 {userWallet?.address || 'no wallet address for currency'}
               </div>
@@ -147,11 +149,11 @@ const Deposit = () => {
 
           <div className="border border-slate-200 dark:border-gray-800 bg-slate-100/40 dark:bg-[#090b12]/50 p-4 rounded-lg">
             <p className="text-xs text-gray-400 leading-6 mb-4">
-              Send the desired deposit amount to the platform's official receiving address listed below. Make sure to copy the exact address.
+              {t('Send the desired deposit amount to the platform\'s official receiving address listed below. Make sure to copy the exact address.')}
             </p>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 bg-slate-100 dark:bg-[#111827] border border-slate-200 dark:border-gray-850 rounded">
               <div className="text-left">
-                <span className="text-[10px] text-gray-400 block font-semibold">Official receiving {selectedCurrency} address:</span>
+                <span className="text-[10px] text-gray-400 block font-semibold">{t('Official receiving ')}{selectedCurrency}{t(' address:')}</span>
                 <span className="text-xs font-bold text-slate-900 dark:text-white select-all font-mono break-all">
                   {userWallet?.address || 'no wallet address for currency'}
                 </span>
@@ -162,7 +164,7 @@ const Deposit = () => {
                   onClick={copyAddress}
                   className="text-cyanAccent hover:text-white transition flex items-center gap-1 self-start sm:self-center cursor-pointer"
                 >
-                  <span className="text-[10px]">{copied ? 'Copied' : 'Copy'}</span>
+                  <span className="text-[10px]">{copied ? t('Copied') : t('Copy')}</span>
                   <Copy size={14} />
                 </button>
               )}
@@ -173,7 +175,7 @@ const Deposit = () => {
         {/* Upload proof form */}
         <div className="glass-panel p-6 rounded-xl flex flex-col justify-between">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Step 2: Submit Proof</h3>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">{t('Step 2: Submit Proof')}</h3>
 
             {successMsg && (
               <div className="rounded bg-emerald-950/30 border border-emerald-500/50 p-3 text-[11px] text-emerald-250 flex items-center gap-2">
@@ -251,29 +253,29 @@ const Deposit = () => {
 
       {/* Deposit history */}
       <div className="glass-panel rounded-xl p-6">
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-6">Deposit History</h3>
+        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-6">{t('Deposit History')}</h3>
         {depositHistory.length === 0 ? (
           <div className="text-center py-8 text-xs text-gray-500">
-            No deposits registered.
+            {t('No deposits registered.')}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-gray-850 text-slate-500 dark:text-gray-400 font-semibold uppercase tracking-wider">
-                  <th className="pb-3">ID</th>
-                  <th className="pb-3">Amount</th>
-                  <th className="pb-3">Currency</th>
-                  <th className="pb-3">TX Hash</th>
-                  <th className="pb-3">Created</th>
-                  <th className="pb-3">Status</th>
-                  <th className="pb-3">Admin Notes</th>
+                  <th className="pb-3">{t('ID')}</th>
+                  <th className="pb-3">{t('Amount')}</th>
+                  <th className="pb-3">{t('Currency')}</th>
+                  <th className="pb-3">{t('TX Hash')}</th>
+                  <th className="pb-3">{t('Created')}</th>
+                  <th className="pb-3">{t('Status')}</th>
+                  <th className="pb-3">{t('Admin Notes')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-150 dark:divide-gray-800/40 text-slate-700 dark:text-gray-300">
                 {depositHistory.map((d) => (
                   <tr key={d.id} className="hover:bg-slate-100/50 dark:hover:bg-gray-800/10">
-                    <td className="py-3 text-gray-500 font-mono">DEP-{d.id}</td>
+                    <td className="py-3 text-gray-500 font-mono">{`DEP-${d.id}`}</td>
                     <td className="py-3 font-semibold text-emeraldAccent">+${parseFloat(d.amount).toFixed(2)}</td>
                     <td className="py-3">{d.currency}</td>
                     <td className="py-3 text-gray-450 font-mono truncate max-w-[120px]">{d.transaction_hash}</td>

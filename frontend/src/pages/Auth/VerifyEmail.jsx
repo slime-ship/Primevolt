@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import api from '../../api/api';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const VerifyEmail = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [status, setStatus] = useState('verifying'); // verifying, success, error
@@ -43,23 +45,23 @@ const VerifyEmail = () => {
         {status === 'verifying' && (
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
             <Loader2 className="h-16 w-16 animate-spin text-cyanAccent" />
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Verifying your email</h2>
-            <p className="text-xs text-gray-400">Please wait while we confirm your email address...</p>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('Verifying your email')}</h2>
+            <p className="text-xs text-gray-400">{t('Please wait while we confirm your email address...')}</p>
           </div>
         )}
 
         {status === 'success' && (
           <div className="flex flex-col items-center justify-center py-8 space-y-4">
             <CheckCircle className="h-16 w-16 text-emeraldAccent" />
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Email Verified!</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('Email Verified!')}</h2>
             <p className="text-xs text-gray-400">
-              Your email has been verified successfully. Redirecting you to the login page...
+              {t('Your email has been verified successfully. Redirecting you to the login page...')}
             </p>
             <button
               onClick={() => navigate('/login?verify_success=true')}
               className="mt-4 px-6 py-2.5 rounded bg-gradient-to-r from-cyanAccent to-emeraldAccent text-black text-xs font-bold shadow shadow-cyanAccent/15 hover:opacity-90 transition"
             >
-              Go to Login
+              {t('Go to Login')}
             </button>
           </div>
         )}
@@ -67,23 +69,23 @@ const VerifyEmail = () => {
         {status === 'error' && (
           <div className="flex flex-col items-center justify-center py-8 space-y-4">
             <XCircle className="h-16 w-16 text-red-500" />
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Verification Failed</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('Verification Failed')}</h2>
             <p className="text-xs text-red-400 font-semibold">{errorMessage}</p>
             <p className="text-xs text-gray-450">
-              The link might be invalid, expired, or already used.
+              {t('The link might be invalid, expired, or already used.')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 mt-4 w-full justify-center">
               <Link
                 to="/login"
                 className="px-6 py-2.5 border border-slate-300 dark:border-gray-700 text-slate-700 dark:text-white text-xs font-bold rounded hover:bg-slate-100 dark:hover:bg-gray-800 transition"
               >
-                Back to Login
+                {t('Back to Login')}
               </Link>
               <Link
                 to="/register"
                 className="px-6 py-2.5 bg-cyanAccent text-black text-xs font-bold rounded shadow hover:opacity-90 transition"
               >
-                Register Again
+                {t('Register Again')}
               </Link>
             </div>
           </div>

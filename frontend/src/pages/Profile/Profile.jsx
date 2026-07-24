@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../api/api';
 import { User, Lock, MapPin, ShieldCheck, QrCode, Clipboard, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Profile = () => {
+  const { t } = useTranslation();
   const { user, fetchUserMe } = useAuth();
   
   // Profile update form states
@@ -145,9 +147,9 @@ const Profile = () => {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 min-h-[calc(100vh-4rem)] text-left">
       <div className="mb-8">
         <h1 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-          <User className="text-cyanAccent" /> Personal Account & Security
+          <User className="text-cyanAccent" /> {t('Personal Account & Security')}
         </h1>
-        <p className="text-xs text-gray-400">Manage your profile information and configure 2-factor authenticator protocols.</p>
+        <p className="text-xs text-gray-400">{t('Manage your profile information and configure 2-factor authenticator protocols.')}</p>
       </div>
 
       {error && (
@@ -167,7 +169,7 @@ const Profile = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="glass-panel p-6 rounded-xl">
             <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <User size={18} className="text-cyanAccent" /> Profile Information
+              <User size={18} className="text-cyanAccent" /> {t('Profile Information')}
             </h2>
 
             {/* Profile Picture Upload Section */}
@@ -180,11 +182,11 @@ const Profile = () => {
                 )}
               </div>
               <div className="text-center sm:text-left">
-                <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">Profile Photo</h3>
-                <p className="text-[10px] text-gray-400 mb-3">Upload a new photo for your profile avatar. PNG or JPEG up to 5MB.</p>
+                <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">{t('Profile Photo')}</h3>
+                <p className="text-[10px] text-gray-400 mb-3">{t('Upload a new photo for your profile avatar. PNG or JPEG up to 5MB.')}</p>
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                   <label className="cursor-pointer bg-slate-200 hover:bg-slate-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-slate-800 dark:text-white font-bold text-[10px] px-3 py-1.5 rounded transition">
-                    Choose Photo
+                    {t('Choose Photo')}
                     <input
                       type="file"
                       accept="image/*"
@@ -194,7 +196,7 @@ const Profile = () => {
                     />
                   </label>
                   {uploadingPic && (
-                    <span className="text-[10px] text-cyanAccent animate-pulse">Uploading...</span>
+                    <span className="text-[10px] text-cyanAccent animate-pulse">{t('Uploading...')}</span>
                   )}
                 </div>
               </div>
@@ -203,7 +205,7 @@ const Profile = () => {
             <form onSubmit={handleUpdateProfile} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">Username</label>
+                  <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Username')}</label>
                   <input
                     type="text"
                     disabled
@@ -212,7 +214,7 @@ const Profile = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">Email Address</label>
+                  <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Email Address')}</label>
                   <input
                     type="email"
                     disabled
@@ -224,7 +226,7 @@ const Profile = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">Full Name</label>
+                  <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Full Name')}</label>
                   <input
                     type="text"
                     required
@@ -235,7 +237,7 @@ const Profile = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">Phone Number</label>
+                  <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Phone Number')}</label>
                   <input
                     type="text"
                     placeholder="+1 234 567 8900"
@@ -248,12 +250,12 @@ const Profile = () => {
 
               <div className="mt-6 border-t border-slate-200 dark:border-gray-850 pt-4">
                 <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                  <MapPin size={16} className="text-cyanAccent" /> Address Details
+                  <MapPin size={16} className="text-cyanAccent" /> {t('Address Details')}
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div className="sm:col-span-2">
-                    <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">Residential Address</label>
+                    <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Residential Address')}</label>
                     <input
                       type="text"
                       placeholder="Street Address, Apt, Suite"
@@ -266,7 +268,7 @@ const Profile = () => {
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">City</label>
+                    <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('City')}</label>
                     <input
                       type="text"
                       placeholder="City"
@@ -276,7 +278,7 @@ const Profile = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">State / Region</label>
+                    <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('State / Region')}</label>
                     <input
                       type="text"
                       placeholder="State"
@@ -286,7 +288,7 @@ const Profile = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">Country</label>
+                    <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Country')}</label>
                     <input
                       type="text"
                       placeholder="Country"
@@ -296,7 +298,7 @@ const Profile = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">ZIP Code</label>
+                    <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('ZIP Code')}</label>
                     <input
                       type="text"
                       placeholder="ZIP"
@@ -314,7 +316,7 @@ const Profile = () => {
                   disabled={loading}
                   className="bg-cyanAccent text-black font-bold text-xs px-6 py-2.5 rounded hover:opacity-90 transition"
                 >
-                  {loading ? 'Saving details...' : 'Save Profile Changes'}
+                  {loading ? t('Saving details...') : t('Save Profile Changes')}
                 </button>
               </div>
             </form>
@@ -325,25 +327,25 @@ const Profile = () => {
         <div className="space-y-6">
           <div className="glass-panel p-6 rounded-xl">
             <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <Lock size={18} className="text-cyanAccent" /> 2-Factor Authentication (2FA)
+              <Lock size={18} className="text-cyanAccent" /> {t('2-Factor Authentication (2FA)')}
             </h2>
 
             {user?.is_2fa_enabled ? (
               <div className="p-4 rounded-lg bg-emerald-950/20 border border-emerald-500/30 text-emerald-400 text-xs">
                 <div className="flex items-center gap-2 font-bold mb-1">
                   <ShieldCheck size={18} />
-                  <span>2FA Protocol is ACTIVE</span>
+                  <span>{t('2FA Protocol is ACTIVE')}</span>
                 </div>
-                <p className="text-[10px] text-gray-400">Withdrawals and high-risk operations require Google Authenticator confirmation codes.</p>
+                <p className="text-[10px] text-gray-400">{t('Withdrawals and high-risk operations require Google Authenticator confirmation codes.')}</p>
               </div>
             ) : (
               <div>
                 <div className="p-4 rounded-lg bg-yellow-500/5 border border-yellow-500/20 text-yellow-500 text-xs mb-4">
                   <div className="flex items-center gap-2 font-bold mb-1">
                     <AlertCircle size={16} />
-                    <span>2FA Protocol is INACTIVE</span>
+                    <span>{t('2FA Protocol is INACTIVE')}</span>
                   </div>
-                  <p className="text-[10px] text-gray-400">Please secure your account balance. Set up Google Authenticator to enable withdrawals.</p>
+                  <p className="text-[10px] text-gray-400">{t('Please secure your account balance. Set up Google Authenticator to enable withdrawals.')}</p>
                 </div>
 
                 {!show2FaSetup ? (
@@ -352,7 +354,7 @@ const Profile = () => {
                     disabled={twoFaLoading}
                     className="w-full py-2.5 bg-cyanAccent text-black font-bold text-xs rounded hover:opacity-90 disabled:opacity-50 transition"
                   >
-                    {twoFaLoading ? 'Provisioning...' : 'Setup Authenticator 2FA'}
+                    {twoFaLoading ? t('Provisioning...') : t('Setup Authenticator 2FA')}
                   </button>
                 ) : (
                   <div className="space-y-6 pt-2">
@@ -361,7 +363,7 @@ const Profile = () => {
                       <div className="p-2 bg-white rounded-lg mb-4">
                         <img src={qrCodeUrl} alt="2FA QR Code" width={160} height={160} />
                       </div>
-                      <p className="text-[10px] text-gray-400 text-center mb-3">Scan this QR code with Google Authenticator or Duo Mobile.</p>
+                      <p className="text-[10px] text-gray-400 text-center mb-3">{t('Scan this QR code with Google Authenticator or Duo Mobile.')}</p>
                       
                       <div className="w-full flex items-center justify-between gap-2 p-2 bg-slate-100 dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded">
                         <span className="font-mono text-[10px] text-slate-805 dark:text-gray-300 select-all truncate">{secretCode}</span>
@@ -378,7 +380,7 @@ const Profile = () => {
                     {/* Verify form code */}
                     <form onSubmit={handleVerify2FA} className="border-t border-slate-200 dark:border-gray-850 pt-4 space-y-4">
                       <div>
-                        <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">Verify 6-Digit Token</label>
+                        <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Verify 6-Digit Token')}</label>
                         <input
                           type="text"
                           required
@@ -395,14 +397,14 @@ const Profile = () => {
                           onClick={() => setShow2FaSetup(false)}
                           className="flex-1 py-2 border border-slate-300 dark:border-gray-850 text-slate-700 dark:text-white rounded text-xs hover:bg-slate-100 dark:hover:bg-gray-850 transition"
                         >
-                          Cancel
+                          {t('Cancel')}
                         </button>
                         <button
                           type="submit"
                           disabled={loading}
                           className="flex-1 py-2 bg-emeraldAccent text-black font-bold text-xs rounded hover:opacity-90 disabled:opacity-50 transition"
                         >
-                          Verify & Activate
+                          {t('Verify & Activate')}
                         </button>
                       </div>
                     </form>

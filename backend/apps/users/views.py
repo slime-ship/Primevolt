@@ -27,14 +27,14 @@ def verify_verification_token(token, max_age=86400):  # 24 hours
 
 def send_verification_email(user, token):
     verification_link = f"{settings.FRONTEND_URL}/verify-email?token={token}"
-    subject = "Verify Your Cryptic Verse Account"
+    subject = "Verify Your PrimeVolt Account"
     message = (
         f"Hello {user.full_name or user.username},\n\n"
-        f"Thank you for registering at Cryptic Verse! Please verify your email address by clicking the link below:\n\n"
+        f"Thank you for registering at PrimeVolt! Please verify your email address by clicking the link below:\n\n"
         f"{verification_link}\n\n"
         f"If you did not request this, please ignore this email.\n\n"
         f"Best regards,\n"
-        f"The Cryptic Verse Team"
+        f"The PrimeVolt Team"
     )
     send_mail(
         subject,
@@ -46,15 +46,15 @@ def send_verification_email(user, token):
 
 def send_verification_email_to_new_address(user, new_email, token):
     verification_link = f"{settings.FRONTEND_URL}/verify-email?token={token}"
-    subject = "Verify Your New Email - Cryptic Verse"
+    subject = "Verify Your New Email - PrimeVolt"
     message = (
         f"Hello {user.full_name or user.username},\n\n"
-        f"You requested to update your email address to {new_email} on Cryptic Verse.\n"
+        f"You requested to update your email address to {new_email} on PrimeVolt.\n"
         f"Please verify this new email address by clicking the link below:\n\n"
         f"{verification_link}\n\n"
         f"If you did not request this, please ignore this email.\n\n"
         f"Best regards,\n"
-        f"The Cryptic Verse Team"
+        f"The PrimeVolt Team"
     )
     send_mail(
         subject,
@@ -150,7 +150,7 @@ def get_referrals(request):
             'status': ref.status
         })
 
-    frontend_url = getattr(settings, 'FRONTEND_URL', 'https://www.crypticverse.online')
+    frontend_url = getattr(settings, 'FRONTEND_URL', 'https://www.primevolt.online')
     referral_link = f"{frontend_url}/register?ref={user.referral_code}"
     
     return Response({
@@ -257,16 +257,16 @@ def password_reset_request(request):
         user.password_reset_otp_created_at = timezone.now()
         user.save(update_fields=['password_reset_otp', 'password_reset_otp_created_at'])
         
-        subject = "Password Reset Code - Cryptic Verse"
+        subject = "Password Reset Code - PrimeVolt"
         message = (
             f"Hello {user.full_name or user.username},\n\n"
-            f"You requested a password reset for your Cryptic Verse account. "
+            f"You requested a password reset for your PrimeVolt account. "
             f"Please use the following 6-digit verification code to complete the process:\n\n"
             f"Verification Code: {code}\n\n"
             f"This code will expire in 15 minutes.\n\n"
             f"If you did not request this, you can safely ignore this email.\n\n"
             f"Best regards,\n"
-            f"The Cryptic Verse Team"
+            f"The PrimeVolt Team"
         )
         send_mail(
             subject,
@@ -317,7 +317,7 @@ def enable_2fa(request):
         user.otp_secret = pyotp.random_base32()
         user.save()
     totp = pyotp.TOTP(user.otp_secret)
-    provisioning_uri = totp.provisioning_uri(name=user.email, issuer_name="Antigravity")
+    provisioning_uri = totp.provisioning_uri(name=user.email, issuer_name="PrimeVolt")
     return Response({
         'secret': user.otp_secret,
         'provisioning_uri': provisioning_uri

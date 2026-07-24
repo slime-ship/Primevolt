@@ -833,7 +833,7 @@ const AdminDashboard = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <Shield className="text-red-500" /> Cryptic Verse Admin Console
+            <Shield className="text-red-500" /> PrimeVolt Admin Console
           </h1>
           <p className="text-xs text-gray-400">System oversight, verification reviews, and operations approvals.</p>
         </div>

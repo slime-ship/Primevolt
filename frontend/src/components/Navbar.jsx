@@ -58,7 +58,7 @@ const Navbar = () => {
                 </svg>
               </div>
               <span className="font-semibold text-lg tracking-tight text-slate-900 dark:text-white">
-                Cryptic Verse
+                PrimeVolt
               </span>
             </Link>
           </div>

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { UserPlus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Register = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -54,17 +56,17 @@ const Register = () => {
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emeraldAccent/10 text-emeraldAccent mb-6">
             <UserPlus size={32} />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Registration Successful!</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{t('Registration Successful!')}</h2>
           <p className="text-xs text-gray-400 mt-4 leading-relaxed">
-            A verification link has been sent to <span className="text-cyanAccent font-semibold">{formData.email}</span>. 
-            Please tap the link in the email to activate your account and access your dashboard.
+            {t('A verification link has been sent to')} <span className="text-cyanAccent font-semibold">{formData.email}</span>. 
+            {t('Please tap the link in the email to activate your account and access your dashboard.')}
           </p>
           <div className="mt-8">
             <Link
               to="/login"
               className="w-full flex items-center justify-center py-3 bg-gradient-to-r from-cyanAccent to-emeraldAccent text-black font-bold text-xs rounded hover:opacity-90 transition shadow shadow-cyanAccent/15"
             >
-              Go to Login Page
+              {t('Go to Login Page')}
             </Link>
           </div>
         </div>
@@ -81,7 +83,7 @@ const Register = () => {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emeraldAccent/10 text-emeraldAccent mb-4">
             <UserPlus size={24} />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Create your investment account</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{t('Create your investment account')}</h2>
           <p className="mt-2 text-xs text-gray-400">
             Already have an account?{' '}
             <Link to="/login" className="font-semibold text-cyanAccent hover:underline">

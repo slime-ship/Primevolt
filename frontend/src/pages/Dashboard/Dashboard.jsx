@@ -63,7 +63,7 @@ const Dashboard = () => {
         'EUR': 0.92,
         'GBP': 0.79,
       };
-      const rate = rates[calcCurrency];
+      const rate = Object.prototype.hasOwnProperty.call(rates, calcCurrency) ? rates[calcCurrency] : 1;
       const amount = parseFloat(calcAmount);
       let resVal = 0;
       if (['BTC', 'ETH', 'BNB', 'SOL'].includes(calcCurrency)) {
