@@ -25,7 +25,7 @@ class UserAuthTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn('message', response.data)
-        self.assertIn('A verification link has been sent', response.data['message'])
+        self.assertIn('pending administrator verification', response.data['message'])
 
         # Check in DB
         user = User.objects.get(username='testuser')
@@ -381,13 +381,13 @@ class EmailVerificationAndDailyProfitTests(APITestCase):
         }
         response = self.client.post(register_url, register_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('A verification link has been sent', response.data['message'])
+        self.assertIn('pending administrator verification', response.data['message'])
 
         # Verify user is created but is_email_verified is False
         user = User.objects.get(username='verifyuser')
         self.assertFalse(user.is_email_verified)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("Verify Your PrimeVolt Account", mail.outbox[0].subject)
+        self.assertIn("Welcome to PrimeVolt", mail.outbox[0].subject)
 
         # Attempt to login (should fail because not verified)
         login_url = '/api/v1/auth/login/'
@@ -397,7 +397,7 @@ class EmailVerificationAndDailyProfitTests(APITestCase):
         }
         login_response = self.client.post(login_url, login_data, format='json')
         self.assertEqual(login_response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("Please verify your email address", str(login_response.data))
+        self.assertIn("pending administrator verification", str(login_response.data))
 
         # Perform verification using the view
         from users.views import generate_verification_token

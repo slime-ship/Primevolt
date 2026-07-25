@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to PrimeVolt</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4faff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #1a2a44;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(10, 61, 145, 0.08);
+            border: 1px solid #e1effe;
+        }
+        .header {
+            background: linear-gradient(135deg, #0A3D91 0%, #2F80ED 100%);
+            padding: 36px 30px;
+            text-align: center;
+        }
+        .logo-text {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
+        }
+        .logo-accent {
+            color: #56CCF2;
+        }
+        .content {
+            padding: 40px 30px;
+            line-height: 1.6;
+        }
+        .greeting {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0A3D91;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            display: inline-block;
+            background-color: #eef7ff;
+            border-left: 4px solid #2F80ED;
+            padding: 16px 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .status-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0A3D91;
+            margin: 0 0 6px 0;
+        }
+        .status-desc {
+            font-size: 14px;
+            color: #2f4568;
+            margin: 0;
+        }
+        .message-body {
+            font-size: 15px;
+            color: #334e68;
+            margin-bottom: 20px;
+        }
+        .footer {
+            background-color: #f4faff;
+            padding: 24px 30px;
+            text-align: center;
+            border-top: 1px solid #e1effe;
+            font-size: 13px;
+            color: #627d98;
+        }
+        .footer p {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <div style="padding: 30px 15px; background-color: #f4faff;">
+        <div class="container">
+            <div class="header">
+                <h1 class="logo-text">Prime<span class="logo-accent">Volt</span></h1>
+            </div>
+            <div class="content">
+                <h2 class="greeting">Welcome to PrimeVolt, {{ full_name }}!</h2>
+                
+                <p class="message-body">
+                    Thank you for joining PrimeVolt. We are pleased to confirm that your account has been created successfully.
+                </p>
+
+                <div class="status-badge">
+                    <p class="status-title">Account Status: Pending Administrator Verification</p>
+                    <p class="status-desc">
+                        Your account is currently under review by our administration team. An administrator will verify and activate your account shortly.
+                    </p>
+                </div>
+
+                <p class="message-body">
+                    Please allow a brief period for our verification team to review your submitted details. Once your account verification is finalized, you will be able to log in and access your full investment dashboard.
+                </p>
+
+                <p class="message-body">
+                    If you have any questions or require further guidance during this review process, please reach out to your administrator or support representative.
+                </p>
+
+                <p class="message-body" style="margin-top: 30px; margin-bottom: 0;">
+                    Best regards,<br>
+                    <strong>The PrimeVolt Team</strong>
+                </p>
+            </div>
+            <div class="footer">
+                <p>&copy; 2026 PrimeVolt. All rights reserved.</p>
+                <p>Secure, Premium, and State-of-the-Art Investment Platform.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

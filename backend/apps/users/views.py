@@ -7,7 +7,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer, RegisterSerializer, CustomTokenObtainPairSerializer, VIPUpgradeRequestSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.core import signing
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.conf import settings
 from django.db import transaction
 from .models import VIPUpgradeRequest
@@ -24,6 +26,33 @@ def verify_verification_token(token, max_age=86400):  # 24 hours
         return data['user_id'], data['email']
     except (signing.SignatureExpired, signing.BadSignature):
         return None, None
+
+def send_welcome_email(user):
+    subject = "Welcome to PrimeVolt - Account Created Successfully"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [user.email]
+    
+    context = {
+        'full_name': str(user.full_name or user.username),
+        'username': str(user.username),
+    }
+    
+    try:
+        html_content = render_to_string('emails/welcome_email.html', context)
+        text_content = strip_tags(html_content)
+        
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
+            from_email=from_email,
+            to=recipient_list
+        )
+        email.attach_alternative(html_content, "text/html")
+        email.send(fail_silently=False)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print("Failed to send welcome email:", str(e))
 
 def send_verification_email(user, token):
     verification_link = f"{settings.FRONTEND_URL}/verify-email?token={token}"
@@ -78,13 +107,12 @@ def register_user(request):
         user.save(update_fields=['is_email_verified'])
         
         try:
-            token = generate_verification_token(user)
-            send_verification_email(user, token)
+            send_welcome_email(user)
         except Exception as e:
-            print("Failed to send email:", str(e))
+            print("Failed to send welcome email:", str(e))
             
         return Response({
-            'message': 'Registration successful! A verification link has been sent to your email. Please verify your email to log in.'
+            'message': 'Your account has been created successfully. Your account is currently pending administrator verification. Please contact the administrator to complete your account verification.'
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

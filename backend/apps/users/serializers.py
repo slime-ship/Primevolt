@@ -79,7 +79,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         if not self.user.is_email_verified and not self.user.is_staff and not self.user.is_superuser:
-            raise serializers.ValidationError({"detail": "Please verify your email address before logging in."})
+            raise serializers.ValidationError({"detail": "Your account is currently pending administrator verification."})
         return data
 
 

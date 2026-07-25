@@ -6,6 +6,14 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+# Load environment variables from .env file
+try:
+    import dotenv
+    dotenv.load_dotenv(BASE_DIR.parent / '.env')
+    dotenv.load_dotenv(BASE_DIR / '.env')
+except ImportError:
+    pass
+
 # Insert apps directory to sys.path
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
@@ -61,7 +69,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR.parent / 'frontend' / 'dist'],
+        'DIRS': [BASE_DIR / 'templates', BASE_DIR.parent / 'frontend' / 'dist'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -144,14 +152,23 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-# Email Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+# Email Configuration (SMTP - Brevo)
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'primevolt8@gmail.com'
-EMAIL_HOST_PASSWORD = 'qvyh xwyq sshg agif'
-DEFAULT_FROM_EMAIL = 'PrimeVolt <primevolt8@gmail.com>'
+EMAIL_USE_SSL = False
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "PrimeVolt <mail@primevolts.org>"
+)
+
+SERVER_EMAIL = os.getenv("SERVER_EMAIL", DEFAULT_FROM_EMAIL)
 
 # Frontend Configuration
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')

@@ -4,41 +4,49 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-darkBg: #0b0f19;
-  --color-dark-bg: #0b0f19;
+  --color-oceanPrimary: #0A3D91;
+  --color-oceanSecondary: #2F80ED;
+  --color-oceanAccent: #56CCF2;
+  --color-oceanBg: #F4FAFF;
+  --color-darkNavy: #1A2A44;
   
-  --color-darkCard: #111827;
-  --color-dark-card: #111827;
+  --color-darkBg: #06152d;
+  --color-dark-bg: #06152d;
   
-  --color-cyanAccent: #10b981;
-  --color-cyan-accent: #10b981;
+  --color-darkCard: #0c1f3f;
+  --color-dark-card: #0c1f3f;
   
-  --color-emeraldAccent: #059669;
-  --color-emerald-accent: #059669;
+  --color-cyanAccent: #56CCF2;
+  --color-cyan-accent: #56CCF2;
   
-  --color-goldAccent: #fbbf24;
-  --color-gold-accent: #fbbf24;
+  --color-emeraldAccent: #2F80ED;
+  --color-emerald-accent: #2F80ED;
+  
+  --color-goldAccent: #F2994A;
+  --color-gold-accent: #F2994A;
 
   --font-sans: "Plus Jakarta Sans", "Inter", sans-serif;
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-gray-100 font-sans antialiased transition-colors duration-300;
+  @apply bg-[#F4FAFF] text-[#1A2A44] dark:bg-[#06152d] dark:text-gray-100 font-sans antialiased transition-colors duration-300;
 }
 
-/* Glassmorphism utility classes */
+/* Glassmorphism utility classes - Ocean Blue Theme */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(47, 128, 237, 0.15);
+  box-shadow: 0 10px 30px rgba(10, 61, 145, 0.05);
 }
 
 .dark .glass-panel {
-  background: rgba(17, 24, 39, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: none;
+  background: rgba(12, 31, 63, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(86, 204, 242, 0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 .glass-panel-hover {
@@ -46,41 +54,43 @@ body {
 }
 
 .glass-panel-hover:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(6, 182, 212, 0.4);
-  box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.08), 0 8px 10px -6px rgba(6, 182, 212, 0.08);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(47, 128, 237, 0.35);
+  box-shadow: 0 14px 35px -5px rgba(10, 61, 145, 0.12);
+  transform: translateY(-2px);
 }
 
 .dark .glass-panel-hover:hover {
-  background: rgba(17, 24, 39, 0.85);
-  border-color: rgba(6, 182, 212, 0.4);
-  box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.15), 0 8px 10px -6px rgba(6, 182, 212, 0.15);
+  background: rgba(12, 31, 63, 0.9);
+  border-color: rgba(86, 204, 242, 0.35);
+  box-shadow: 0 14px 35px -5px rgba(86, 204, 242, 0.15);
+  transform: translateY(-2px);
 }
 
 .glass-input {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  color: #0f172a;
-  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(47, 128, 237, 0.2);
+  color: #1A2A44;
+  transition: all 0.2s ease-in-out;
 }
 
 .dark .glass-input {
-  background: rgba(31, 41, 55, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: rgba(15, 38, 77, 0.6);
+  border: 1px solid rgba(86, 204, 242, 0.2);
+  color: #ffffff;
 }
 
 .glass-input:focus {
   background: #ffffff;
-  border-color: #06b6d4;
+  border-color: #2F80ED;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.2);
 }
 
 .dark .glass-input:focus {
-  background: rgba(31, 41, 55, 0.8);
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+  background: rgba(15, 38, 77, 0.9);
+  border-color: #56CCF2;
+  box-shadow: 0 0 0 3px rgba(86, 204, 242, 0.2);
 }
 
 /* Custom scrollbars */
@@ -94,101 +104,104 @@ body {
 }
 
 .dark ::-webkit-scrollbar-track {
-  background: #0b0f19;
+  background: #06152d;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.15);
+  background: rgba(10, 61, 145, 0.2);
   border-radius: 3px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(86, 204, 242, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 23, 42, 0.25);
+  background: rgba(47, 128, 237, 0.4);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(86, 204, 242, 0.4);
 }
 
 /* Glow effects */
 .glow-cyan {
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.08);
+  box-shadow: 0 0 25px rgba(86, 204, 242, 0.2);
 }
 
 .dark .glow-cyan {
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+  box-shadow: 0 0 25px rgba(86, 204, 242, 0.3);
 }
 
 .glow-emerald {
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.08);
+  box-shadow: 0 0 25px rgba(47, 128, 237, 0.2);
 }
 
 .dark .glow-emerald {
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 25px rgba(47, 128, 237, 0.3);
 }
 
-/* Custom camelCase theme class overrides for Tailwind v4 */
+/* Ocean Blue theme class overrides for legacy color mappings */
 .bg-darkBg {
-  background-color: #0b0f19 !important;
+  background-color: #06152d !important;
 }
 .dark .dark\:bg-darkBg {
-  background-color: #0b0f19 !important;
+  background-color: #06152d !important;
 }
 .bg-darkCard {
-  background-color: #111827 !important;
+  background-color: #0c1f3f !important;
 }
 .dark .dark\:bg-darkCard {
-  background-color: #111827 !important;
+  background-color: #0c1f3f !important;
 }
+
 .text-cyanAccent {
-  color: #10b981 !important;
+  color: #56CCF2 !important;
 }
 .dark .dark\:text-cyanAccent {
-  color: #10b981 !important;
+  color: #56CCF2 !important;
 }
 .bg-cyanAccent {
-  background-color: #10b981 !important;
+  background-color: #56CCF2 !important;
 }
 .dark .dark\:bg-cyanAccent {
-  background-color: #10b981 !important;
+  background-color: #56CCF2 !important;
 }
 .border-cyanAccent {
-  border-color: #10b981 !important;
+  border-color: #56CCF2 !important;
 }
 .dark .dark\:border-cyanAccent {
-  border-color: #10b981 !important;
+  border-color: #56CCF2 !important;
 }
+
 .text-emeraldAccent {
-  color: #059669 !important;
+  color: #2F80ED !important;
 }
 .dark .dark\:text-emeraldAccent {
-  color: #059669 !important;
+  color: #2F80ED !important;
 }
 .bg-emeraldAccent {
-  background-color: #059669 !important;
+  background-color: #2F80ED !important;
 }
 .dark .dark\:bg-emeraldAccent {
-  background-color: #059669 !important;
+  background-color: #2F80ED !important;
 }
 .border-emeraldAccent {
-  border-color: #059669 !important;
+  border-color: #2F80ED !important;
 }
 .dark .dark\:border-emeraldAccent {
-  border-color: #059669 !important;
+  border-color: #2F80ED !important;
 }
+
 .text-goldAccent {
-  color: #fbbf24 !important;
+  color: #F2994A !important;
 }
 .dark .dark\:text-goldAccent {
-  color: #fbbf24 !important;
+  color: #F2994A !important;
 }
 .bg-goldAccent {
-  background-color: #fbbf24 !important;
+  background-color: #F2994A !important;
 }
 .dark .dark\:bg-goldAccent {
-  background-color: #fbbf24 !important;
+  background-color: #F2994A !important;
 }
