@@ -87,6 +87,7 @@ const AdminDashboard = () => {
   const [editUserProfitAccrued, setEditUserProfitAccrued] = useState('');
   const [editUserReferralBonus, setEditUserReferralBonus] = useState('');
   const [editUserVipLevel, setEditUserVipLevel] = useState('');
+  const [editUserIsEmailVerified, setEditUserIsEmailVerified] = useState(false);
   const [submittingAdjust, setSubmittingAdjust] = useState(false);
 
   // Approval Note States
@@ -662,6 +663,28 @@ const AdminDashboard = () => {
     }
   };
 
+  // Verify user email/account
+  const handleVerifyUser = async (userId) => {
+    try {
+      const res = await api.post(`admin/users/${userId}/verify/`);
+      setSuccess(res.data.message || 'User account verified successfully.');
+      fetchUsers();
+    } catch (err) {
+      setError('Could not verify user account.');
+    }
+  };
+
+  // Unverify user email/account
+  const handleUnverifyUser = async (userId) => {
+    try {
+      const res = await api.post(`admin/users/${userId}/unverify/`);
+      setSuccess(res.data.message || 'User account unverified successfully.');
+      fetchUsers();
+    } catch (err) {
+      setError('Could not unverify user account.');
+    }
+  };
+
   // Toggle freeze user account
   const handleToggleFreeze = async (userId) => {
     try {
@@ -697,6 +720,7 @@ const AdminDashboard = () => {
     setEditUserProfitAccrued(u.profit_accrued_override !== null && u.profit_accrued_override !== undefined ? u.profit_accrued_override : '');
     setEditUserReferralBonus(u.referral_bonus_override !== null && u.referral_bonus_override !== undefined ? u.referral_bonus_override : '');
     setEditUserVipLevel(u.vip_level || '1');
+    setEditUserIsEmailVerified(!!u.is_email_verified);
   };
 
   const handleUpdateUser = async (e) => {
@@ -712,10 +736,11 @@ const AdminDashboard = () => {
         active_investment_override: editUserActiveInvestment === '' ? null : editUserActiveInvestment,
         profit_accrued_override: editUserProfitAccrued === '' ? null : editUserProfitAccrued,
         referral_bonus_override: editUserReferralBonus === '' ? null : editUserReferralBonus,
-        vip_level: editUserVipLevel
+        vip_level: editUserVipLevel,
+        is_email_verified: editUserIsEmailVerified
       };
       await api.patch(url, payload);
-      setSuccess('User balance fields updated successfully.');
+      setSuccess('User balance and verification status updated successfully.');
       setSelectedUser(null);
       fetchUsers();
     } catch (err) {
@@ -1035,6 +1060,7 @@ const AdminDashboard = () => {
                   <tr className="border-b border-slate-200 dark:border-gray-855 text-slate-555 dark:text-gray-400 font-semibold uppercase tracking-wider">
                     <th className="pb-3">User Details</th>
                     <th className="pb-3">Email</th>
+                    <th className="pb-3">Verification Status</th>
                     <th className="pb-3">Balance</th>
                     <th className="pb-3">KYC Lvl</th>
                     <th className="pb-3">Freeze State</th>
@@ -1048,6 +1074,13 @@ const AdminDashboard = () => {
                         {u.full_name} <span className="text-[10px] text-gray-500">(@{u.username})</span>
                       </td>
                       <td className="py-3">{u.email}</td>
+                      <td className="py-3">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                          u.is_email_verified ? 'bg-emeraldAccent/15 text-emeraldAccent' : 'bg-yellow-500/15 text-yellow-500'
+                        }`}>
+                          {u.is_email_verified ? '✓ Verified' : '⚠ Unverified'}
+                        </span>
+                      </td>
                       <td className="py-3 font-bold">${parseFloat(u.balance).toFixed(2)}</td>
                       <td className="py-3">Level {u.kyc_level}</td>
                       <td className="py-3">
@@ -1058,6 +1091,23 @@ const AdminDashboard = () => {
                         </span>
                       </td>
                       <td className="py-3 flex gap-2">
+                        {u.is_email_verified ? (
+                          <button
+                            onClick={() => handleUnverifyUser(u.id)}
+                            className="p-1.5 bg-yellow-500/20 text-yellow-500 rounded hover:bg-yellow-500/30"
+                            title="Mark Unverified"
+                          >
+                            <X size={14} />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleVerifyUser(u.id)}
+                            className="px-2 py-1 bg-emeraldAccent text-black font-bold text-[10px] rounded hover:opacity-90 transition flex items-center gap-1"
+                            title="Verify User Account"
+                          >
+                            <Check size={12} /> Verify
+                          </button>
+                        )}
                         <button
                           onClick={() => handleToggleFreeze(u.id)}
                           className={`p-1.5 rounded transition ${
@@ -2445,6 +2495,18 @@ const AdminDashboard = () => {
                     <option value="3">VIP Level 3 VIP</option>
                   </select>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] text-slate-500 dark:text-gray-500 uppercase mb-2">Account Verification</label>
+                <select
+                  className="w-full p-2.5 rounded glass-input text-xs font-bold"
+                  value={editUserIsEmailVerified ? 'true' : 'false'}
+                  onChange={(e) => setEditUserIsEmailVerified(e.target.value === 'true')}
+                >
+                  <option value="true">Verified (Allowed to Log In)</option>
+                  <option value="false">Unverified (Pending Admin Verification)</option>
+                </select>
               </div>
 
               <div className="flex gap-3 pt-4">

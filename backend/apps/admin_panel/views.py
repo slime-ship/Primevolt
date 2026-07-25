@@ -59,8 +59,10 @@ def admin_login(request):
         email = serializer.validated_data['email']
         password = serializer.validated_data['password']
         from django.db.models import Q
+        
+        # 1. Check Admin model first
         try:
-            admin = Admin.objects.get(Q(email=email) | Q(full_name=email), is_active=True)
+            admin = Admin.objects.get(Q(email__iexact=email) | Q(full_name__iexact=email), is_active=True)
             if admin.check_password(password):
                 admin.last_login_at = timezone.now()
                 admin.save()
@@ -69,9 +71,36 @@ def admin_login(request):
                     'admin': AdminSerializer(admin).data,
                     'tokens': tokens
                 })
-            return Response({'error': 'Invalid credentials.'}, status=status.HTTP_400_BAD_REQUEST)
         except Admin.DoesNotExist:
-            return Response({'error': 'Invalid credentials.'}, status=status.HTTP_400_BAD_REQUEST)
+            pass
+
+        # 2. Check Django User model (is_staff=True or is_superuser=True)
+        django_user = User.objects.filter(
+            Q(username__iexact=email) | Q(email__iexact=email),
+            Q(is_staff=True) | Q(is_superuser=True),
+            is_active=True
+        ).first()
+
+        if django_user and django_user.check_password(password):
+            admin_email = django_user.email or f"{django_user.username}@primevolt.com"
+            admin, created = Admin.objects.get_or_create(
+                email=admin_email,
+                defaults={
+                    'full_name': django_user.full_name or django_user.username,
+                    'role': 'SUPER_ADMIN' if django_user.is_superuser else 'ADMIN',
+                    'is_active': True
+                }
+            )
+            admin.set_password(password)
+            admin.last_login_at = timezone.now()
+            admin.save()
+            tokens = get_tokens_for_admin(admin)
+            return Response({
+                'admin': AdminSerializer(admin).data,
+                'tokens': tokens
+            })
+
+        return Response({'error': 'Invalid administrative credentials.'}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AdminDashboardStatsView(views.APIView):
@@ -242,6 +271,38 @@ class AdminUserViewSet(viewsets.ModelViewSet):
             new_values={'is_frozen': user.is_frozen}
         )
         return Response({'status': 'success', 'is_frozen': user.is_frozen, 'message': f"User account has been {'frozen' if user.is_frozen else 'activated'}."})
+
+    @action(detail=True, methods=['post'], url_path='verify')
+    def verify_user(self, request, pk=None):
+        user = self.get_object()
+        user.is_email_verified = True
+        user.save(update_fields=['is_email_verified'])
+        
+        AuditLog.objects.create(
+            admin=request.admin_user,
+            user=user,
+            action='VERIFY_USER_EMAIL',
+            entity_type='User',
+            entity_id=str(user.id),
+            new_values={'is_email_verified': True}
+        )
+        return Response({'status': 'success', 'message': f"User @{user.username} account has been verified by admin."})
+
+    @action(detail=True, methods=['post'], url_path='unverify')
+    def unverify_user(self, request, pk=None):
+        user = self.get_object()
+        user.is_email_verified = False
+        user.save(update_fields=['is_email_verified'])
+        
+        AuditLog.objects.create(
+            admin=request.admin_user,
+            user=user,
+            action='UNVERIFY_USER_EMAIL',
+            entity_type='User',
+            entity_id=str(user.id),
+            new_values={'is_email_verified': False}
+        )
+        return Response({'status': 'success', 'message': f"User @{user.username} account has been unverified by admin."})
 
     @action(detail=True, methods=['post'], url_path='balance/add')
     def add_balance(self, request, pk=None):
