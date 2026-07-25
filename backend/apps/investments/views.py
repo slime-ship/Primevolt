@@ -18,6 +18,9 @@ class InvestmentViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        from .utils import process_matured_investments_for_user
+        if self.request.user and self.request.user.is_authenticated:
+            process_matured_investments_for_user(self.request.user)
         return Investment.objects.filter(user=self.request.user)
 
     @action(detail=True, methods=['post'], url_path='reinvest')

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../api/api';
-import { LifeBuoy, Plus, Send, Clock, AlertCircle, MessageSquare, Check, User, ShieldAlert } from 'lucide-react';
+import { LifeBuoy, Plus, Send, Clock, AlertCircle, MessageSquare, Check, User, ShieldAlert, Paperclip, Image as ImageIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const Support = () => {
@@ -17,10 +17,12 @@ const Support = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [priority, setPriority] = useState('MEDIUM');
+  const [ticketImage, setTicketImage] = useState(null);
   const [creating, setCreating] = useState(false);
 
   // Form states for chat reply
   const [replyMessage, setReplyMessage] = useState('');
+  const [replyImage, setReplyImage] = useState(null);
   const [replying, setReplying] = useState(false);
 
   const chatEndRef = useRef(null);
@@ -82,11 +84,22 @@ const Support = () => {
     setError('');
     setSuccess('');
     try {
-      const res = await api.post('support/tickets/', { subject, message, priority });
+      const formData = new FormData();
+      formData.append('subject', subject);
+      formData.append('message', message);
+      formData.append('priority', priority);
+      if (ticketImage) {
+        formData.append('image', ticketImage);
+      }
+
+      const res = await api.post('support/tickets/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       setSuccess('Support ticket created successfully.');
       setSubject('');
       setMessage('');
       setPriority('MEDIUM');
+      setTicketImage(null);
       setShowCreateModal(false);
       
       // Refresh list and set active
@@ -103,15 +116,26 @@ const Support = () => {
 
   const handleSendReply = async (e) => {
     e.preventDefault();
-    if (!replyMessage.trim()) return;
+    if (!replyMessage.trim() && !replyImage) return;
 
     setReplying(true);
     setError('');
     try {
-      const res = await api.post(`support/tickets/${selectedTicket.id}/messages/`, {
-        message: replyMessage
+      const formData = new FormData();
+      if (replyMessage.trim()) {
+        formData.append('message', replyMessage);
+      } else {
+        formData.append('message', 'Attached image');
+      }
+      if (replyImage) {
+        formData.append('image', replyImage);
+      }
+
+      const res = await api.post(`support/tickets/${selectedTicket.id}/messages/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
-      // Append message locally to avoid scroll jump
+
+      // Append message locally
       if (ticketDetails) {
         setTicketDetails({
           ...ticketDetails,
@@ -119,6 +143,7 @@ const Support = () => {
         });
       }
       setReplyMessage('');
+      setReplyImage(null);
       
       // Refresh ticket state in list
       fetchTickets();
@@ -166,7 +191,7 @@ const Support = () => {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 bg-gradient-to-r from-cyanAccent to-emeraldAccent text-black px-4 py-2 rounded text-xs font-bold hover:opacity-90 transition"
+          className="flex items-center gap-2 bg-gradient-to-r from-cyanAccent to-emeraldAccent text-black px-4 py-2 rounded text-xs font-bold hover:opacity-90 transition cursor-pointer"
         >
           <Plus size={16} /> {t('New Support Ticket')}
         </button>
@@ -196,7 +221,7 @@ const Support = () => {
             {tickets.length === 0 ? (
               <div className="text-center py-12 text-xs text-gray-500 px-4">
                 <MessageSquare size={32} className="mx-auto text-slate-450 dark:text-gray-650 mb-2" />
-                {t('No tickets filed. Click \'New Support Ticket\' to start a session.')}
+                {t("No tickets filed. Click 'New Support Ticket' to start a session.")}
               </div>
             ) : (
               tickets.map((tItem) => (
@@ -257,6 +282,15 @@ const Support = () => {
                       <span className="text-gray-500 font-normal">| OP</span>
                     </div>
                     <p className="text-xs text-slate-900 dark:text-white whitespace-pre-wrap">{selectedTicket.message}</p>
+                    
+                    {selectedTicket.image && (
+                      <div className="mt-2.5">
+                        <a href={selectedTicket.image} target="_blank" rel="noreferrer">
+                          <img src={selectedTicket.image} alt="Attachment" className="max-h-48 rounded border border-slate-300 dark:border-gray-750 object-cover hover:opacity-90 transition" />
+                        </a>
+                      </div>
+                    )}
+
                     <span className="block text-[8px] text-gray-500 mt-2 text-right">
                       {new Date(selectedTicket.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
@@ -287,6 +321,15 @@ const Support = () => {
                           )}
                         </div>
                         <p className="text-xs text-slate-800 dark:text-white whitespace-pre-wrap">{msg.message}</p>
+
+                        {msg.image && (
+                          <div className="mt-2.5">
+                            <a href={msg.image} target="_blank" rel="noreferrer">
+                              <img src={msg.image} alt="Message attachment" className="max-h-48 rounded border border-slate-300 dark:border-gray-750 object-cover hover:opacity-90 transition" />
+                            </a>
+                          </div>
+                        )}
+
                         <span className="block text-[8px] text-gray-500 mt-2 text-right">
                           {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
@@ -298,14 +341,35 @@ const Support = () => {
               </div>
 
               {/* Chat Input panel */}
-              <div className="p-4 border-t border-slate-200 dark:border-gray-850 bg-slate-100/30 dark:bg-gray-950/20">
+              <div className="p-4 border-t border-slate-200 dark:border-gray-850 bg-slate-100/30 dark:bg-gray-950/20 space-y-2">
                 {selectedTicket.status === 'CLOSED' && (
                   <p className="text-[10px] text-yellow-500 mb-2">⚠ {t('This ticket is closed. Typing a reply will automatically reopen this support thread.')}</p>
                 )}
-                <form onSubmit={handleSendReply} className="flex gap-2">
+
+                {replyImage && (
+                  <div className="flex items-center gap-2 bg-slate-200 dark:bg-gray-850 p-2 rounded text-xs">
+                    <ImageIcon size={14} className="text-cyanAccent" />
+                    <span className="truncate max-w-[200px] text-[11px] text-slate-900 dark:text-white">{replyImage.name}</span>
+                    <button type="button" onClick={() => setReplyImage(null)} className="text-red-400 font-bold ml-auto text-[10px]">Remove</button>
+                  </div>
+                )}
+
+                <form onSubmit={handleSendReply} className="flex items-center gap-2">
+                  <label className="p-2.5 rounded glass-input hover:bg-slate-200 dark:hover:bg-gray-800 cursor-pointer flex items-center justify-center text-gray-400 hover:text-cyanAccent transition">
+                    <Paperclip size={16} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setReplyImage(e.target.files[0]);
+                        }
+                      }}
+                    />
+                  </label>
                   <input
                     type="text"
-                    required
                     placeholder={t('Type your message to support...')}
                     className="flex-1 p-2.5 rounded glass-input text-xs"
                     value={replyMessage}
@@ -313,8 +377,8 @@ const Support = () => {
                   />
                   <button
                     type="submit"
-                    disabled={replying || !replyMessage.trim()}
-                    className="bg-cyanAccent text-black p-2.5 rounded hover:opacity-90 disabled:opacity-50 transition flex items-center justify-center aspect-square"
+                    disabled={replying || (!replyMessage.trim() && !replyImage)}
+                    className="bg-cyanAccent text-black p-2.5 rounded hover:opacity-90 disabled:opacity-50 transition flex items-center justify-center aspect-square cursor-pointer"
                   >
                     <Send size={16} />
                   </button>
@@ -352,7 +416,7 @@ const Support = () => {
               <div>
                 <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Priority Level')}</label>
                 <select
-                  className="w-full p-2.5 rounded glass-input text-xs"
+                  className="w-full p-2.5 rounded glass-input text-xs cursor-pointer"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
                 >
@@ -368,10 +432,24 @@ const Support = () => {
                 <textarea
                   required
                   rows={4}
-                  placeholder="Please state transaction hashes, steps, or screenshots links where possible..."
+                  placeholder="Please state transaction details, steps, or explanation..."
                   className="w-full p-2.5 rounded glass-input text-xs"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] text-gray-400 uppercase font-semibold mb-2">{t('Attach Screenshot / Image (Optional)')}</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-cyanAccent/20 file:text-cyanAccent hover:file:bg-cyanAccent/30 cursor-pointer"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setTicketImage(e.target.files[0]);
+                    }
+                  }}
                 />
               </div>
 
@@ -379,14 +457,14 @@ const Support = () => {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 border border-slate-250 dark:border-gray-850 text-slate-700 dark:text-white rounded text-xs hover:bg-slate-100 dark:hover:bg-gray-850 transition"
+                  className="px-4 py-2 border border-slate-250 dark:border-gray-850 text-slate-700 dark:text-white rounded text-xs hover:bg-slate-100 dark:hover:bg-gray-850 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="px-4 py-2 bg-gradient-to-r from-cyanAccent to-emeraldAccent text-black rounded text-xs font-bold hover:opacity-90 transition"
+                  className="px-4 py-2 bg-gradient-to-r from-cyanAccent to-emeraldAccent text-black rounded text-xs font-bold hover:opacity-90 transition cursor-pointer"
                 >
                   {creating ? 'Opening Session...' : 'Submit Support Ticket'}
                 </button>

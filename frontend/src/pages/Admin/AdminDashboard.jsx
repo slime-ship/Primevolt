@@ -2336,6 +2336,13 @@ const AdminDashboard = () => {
                           <span className="text-gray-500 font-normal">| Original Issue</span>
                         </div>
                         <p className="text-xs text-slate-900 dark:text-white whitespace-pre-wrap">{selectedAdminTicket.message}</p>
+                        {selectedAdminTicket.image && (
+                          <div className="mt-2.5">
+                            <a href={selectedAdminTicket.image} target="_blank" rel="noreferrer">
+                              <img src={selectedAdminTicket.image} alt="Attachment" className="max-h-48 rounded border border-slate-300 dark:border-gray-750 object-cover hover:opacity-90 transition" />
+                            </a>
+                          </div>
+                        )}
                         <span className="block text-[8px] text-gray-500 mt-2 text-right">
                           {new Date(selectedAdminTicket.created_at).toLocaleString()}
                         </span>
@@ -2366,6 +2373,13 @@ const AdminDashboard = () => {
                               )}
                             </div>
                             <p className="text-xs text-slate-800 dark:text-white whitespace-pre-wrap">{msg.message}</p>
+                            {msg.image && (
+                              <div className="mt-2.5">
+                                <a href={msg.image} target="_blank" rel="noreferrer">
+                                  <img src={msg.image} alt="Attachment" className="max-h-48 rounded border border-slate-300 dark:border-gray-750 object-cover hover:opacity-90 transition" />
+                                </a>
+                              </div>
+                            )}
                             <span className="block text-[8px] text-gray-500 mt-2 text-right">
                               {new Date(msg.created_at).toLocaleString()}
                             </span>

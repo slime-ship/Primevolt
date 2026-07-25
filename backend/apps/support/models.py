@@ -5,6 +5,7 @@ class SupportTicket(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tickets')
     subject = models.CharField(max_length=200)
     message = models.TextField()
+    image = models.FileField(upload_to='support_images/', null=True, blank=True)
     status = models.CharField(
         max_length=20,
         choices=[('OPEN', 'Open'), ('IN_PROGRESS', 'In Progress'), ('RESOLVED', 'Resolved'), ('CLOSED', 'Closed')],
@@ -27,8 +28,9 @@ class TicketMessage(models.Model):
     ticket = models.ForeignKey(SupportTicket, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     message = models.TextField()
+    image = models.FileField(upload_to='support_images/', null=True, blank=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Message on Ticket #{self.ticket.id} by {self.sender.username}"
+        return f"Message on Ticket #{self.ticket.id} by {self.sender.username if self.sender else 'Admin'}"

@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .models import SupportTicket, TicketMessage
 from .serializers import SupportTicketSerializer, TicketMessageSerializer
 from admin_panel.permissions import IsAdminUserToken
@@ -8,6 +9,7 @@ from admin_panel.permissions import IsAdminUserToken
 class SupportTicketViewSet(viewsets.ModelViewSet):
     serializer_class = SupportTicketSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def get_queryset(self):
         return SupportTicket.objects.filter(user=self.request.user)
@@ -31,6 +33,7 @@ class SupportTicketViewSet(viewsets.ModelViewSet):
 class AdminSupportTicketViewSet(viewsets.ModelViewSet):
     authentication_classes = ()
     permission_classes = [IsAdminUserToken]
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
     serializer_class = SupportTicketSerializer
     queryset = SupportTicket.objects.all().order_by('-updated_at')
 
@@ -44,7 +47,6 @@ class AdminSupportTicketViewSet(viewsets.ModelViewSet):
                 sender=None,
                 is_admin=True
             )
-            # Update ticket status to IN_PROGRESS when admin replies
             if ticket.status == 'OPEN':
                 ticket.status = 'IN_PROGRESS'
                 ticket.save()

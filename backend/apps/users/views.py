@@ -93,6 +93,10 @@ class UserMeView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        from investments.utils import process_matured_investments_for_user
+        process_matured_investments_for_user(request.user)
+        # Refresh user instance from DB after maturity processing
+        request.user.refresh_from_db()
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
