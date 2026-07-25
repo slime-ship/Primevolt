@@ -23,7 +23,13 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-primevolt-platform-secret-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'www.primevolts.org',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://www.primevolts.org',
+]
 
 # Application definition
 INSTALLED_APPS = [
