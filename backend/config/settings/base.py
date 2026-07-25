@@ -157,7 +157,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'primevolt8@gmail.com'
 EMAIL_HOST_PASSWORD = 'qvyh xwyq sshg agif'
-DEFAULT_FROM_EMAIL = 'PrimeVolt <primevolt8@gmail.com>'
+DEFAULT_FROM_EMAIL = 'PrimeVolt <mail@primevolts.org>'
 
 # Frontend Configuration
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
