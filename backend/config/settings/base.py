@@ -1,21 +1,20 @@
 import os
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
 from datetime import timedelta
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Load environment variables from .env file
-try:
-    import dotenv
-    dotenv.load_dotenv(BASE_DIR.parent / '.env')
-    dotenv.load_dotenv(BASE_DIR / '.env')
-except ImportError:
-    pass
+# Project root (Primevolt/)
+ROOT_DIR = Path(__file__).resolve().parents[3]
+
+# Load environment variables from Primevolt/.env
+load_dotenv(ROOT_DIR / ".env")
 
 # Insert apps directory to sys.path
-sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
+sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-primevolt-platform-secret-key-12345')
