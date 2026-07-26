@@ -174,6 +174,11 @@ DEFAULT_FROM_EMAIL = os.getenv(
 
 SERVER_EMAIL = os.getenv("SERVER_EMAIL", DEFAULT_FROM_EMAIL)
 
+print("EMAIL_HOST:", EMAIL_HOST)
+print("EMAIL_PORT:", EMAIL_PORT)
+print("EMAIL_HOST_USER:", EMAIL_HOST_USER)
+print("DEFAULT_FROM_EMAIL:", DEFAULT_FROM_EMAIL)
+
 # Frontend Configuration
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
 
