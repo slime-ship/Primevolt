@@ -15,6 +15,7 @@ class Transaction(models.Model):
             ('PROFIT', 'Profit'),
             ('REFERRAL_BONUS', 'Referral Bonus'),
             ('ADMIN_ADJUSTMENT', 'Admin Adjustment'),
+            ('CURRENCY_CONVERSION', 'Currency Conversion'),
             ('FEE', 'Fee')
         ]
     )

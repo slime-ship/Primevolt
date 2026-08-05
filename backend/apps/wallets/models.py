@@ -38,3 +38,22 @@ class Wallet(models.Model):
             if user.balance != self.balance:
                 user.balance = self.balance
                 user.save(update_fields=['balance'])
+
+
+class CompanyWallet(models.Model):
+    wallet_name = models.CharField(max_length=100, default="Company USDT Wallet")
+    wallet_address = models.CharField(max_length=255)
+    network = models.CharField(max_length=50, default="ERC20", help_text="e.g., ERC20, TRC20, BEP20")
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.wallet_name} ({self.network}) - {'Active' if self.active else 'Inactive'}"
+
+    def save(self, *args, **kwargs):
+        if self.active:
+            # Set all other CompanyWallet instances to inactive
+            CompanyWallet.objects.filter(active=True).exclude(pk=self.pk).update(active=False)
+        super().save(*args, **kwargs)
+

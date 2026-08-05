@@ -376,8 +376,18 @@ class VIPUpgradeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return VIPUpgradeRequest.objects.filter(user=self.request.user).order_by('-created_at')
 
+    def create(self, request, *args, **kwargs):
+        from core.models import PlatformSettings
+        settings_obj = PlatformSettings.get_settings()
+        if not settings_obj.enable_vip_upgrade:
+            return Response({'error': 'VIP upgrade is currently disabled by administrator.'}, status=status.HTTP_400_BAD_REQUEST)
+        return super().create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user, amount=200.0, status='PENDING')
+        from core.models import PlatformSettings
+        settings_obj = PlatformSettings.get_settings()
+        serializer.save(user=self.request.user, amount=settings_obj.vip_upgrade_fee, status='PENDING')
+
 
 
 import cloudinary

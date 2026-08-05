@@ -17,11 +17,31 @@ const UpgradeVIP = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const navigate = useNavigate();
 
-  const billingAddress = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
+  // Dynamic platform settings
+  const [platformSettings, setPlatformSettings] = useState({
+    company_wallet_address: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+    wallet_network: 'ERC20',
+    vip_upgrade_fee: 200.00,
+    enable_vip_upgrade: true,
+  });
+  const billingAddress = platformSettings.company_wallet_address;
 
   useEffect(() => {
     fetchUpgradeRequests();
+    fetchPlatformSettings();
   }, []);
+
+  const fetchPlatformSettings = async () => {
+    try {
+      const res = await api.get('website-settings/');
+      setPlatformSettings(prev => ({
+        ...prev,
+        ...res.data,
+      }));
+    } catch (err) {
+      console.error('Failed to load platform settings:', err);
+    }
+  };
 
   const fetchUpgradeRequests = async () => {
     try {
@@ -140,11 +160,11 @@ const UpgradeVIP = () => {
                 <div className="p-4 rounded-lg bg-slate-100/50 dark:bg-darkCard/30 border border-slate-200 dark:border-gray-800 space-y-4">
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200 dark:border-gray-800">
                     <span className="text-xs text-slate-500 dark:text-gray-400">{t('VIP 2 Subscription Fee:')}</span>
-                    <span className="text-sm font-bold text-slate-900 dark:text-white">$200.00 USDT</span>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white">${parseFloat(platformSettings.vip_upgrade_fee || 200).toFixed(2)} USDT</span>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] text-slate-500 dark:text-gray-500 uppercase font-semibold mb-2">{t('Company USDT Address (ERC-20)')}</label>
+                    <label className="block text-[10px] text-slate-500 dark:text-gray-500 uppercase font-semibold mb-2">{t('Company USDT Address')} ({platformSettings.wallet_network || 'ERC-20'})</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
